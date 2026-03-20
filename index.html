@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MECHA.DEV</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b0f;--bg2:#0c1118;--panel:#0f1620;--panel2:#131d28;--green:#00ff88;--green2:#00cc66;--amber:#ffaa00;--amber2:#cc8800;--cyan:#00ccff;--cyan2:#0099cc;--red:#ff3355;--dim:#1e3248;--text:#c8d8e8;--text2:#6888a0;--border:#1a2e42;--gg:0 0 12px rgba(0,255,136,.45);--ga:0 0 12px rgba(255,170,0,.45);--gc:0 0 12px rgba(0,204,255,.45);--gr:0 0 12px rgba(255,51,85,.45);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;cursor:crosshair;overflow:hidden;}
+#scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:9998;}
+#gridbg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+#bgCanvas{position:fixed;inset:0;pointer-events:none;z-index:1;}
+/* BOOT */
+#boot{position:fixed;inset:0;background:#000;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--green);transition:opacity .7s;}
+#bootText{max-width:520px;width:90%;line-height:1.9;}
+#bootBarWrap{width:320px;height:8px;background:#111;border:1px solid var(--border);margin-top:18px;}
+#bootBar{height:100%;width:0;background:var(--green);box-shadow:var(--gg);transition:width .12s;}
+/* SHELL */
+#shell{position:fixed;inset:0;z-index:2;display:grid;grid-template-rows:56px 1fr 32px;grid-template-columns:220px 1fr;opacity:0;transition:opacity .6s;}
+#shell.visible{opacity:1;}
+/* TOPBAR */
+#topbar{grid-column:1/-1;grid-row:1;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:18px;position:relative;}
+#topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),var(--amber),var(--cyan),transparent);opacity:.4;}
+.tb-logo{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:2px;white-space:nowrap;text-shadow:0 0 14px rgba(0,255,136,.4);}
+.tb-logo span{color:var(--green);}
+.tb-sep{color:var(--border);font-size:20px;}
+#tb-breadcrumb{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:1px;flex:1;}
+#tb-breadcrumb span{color:var(--green);}
+.tb-leds{display:flex;gap:8px;align-items:center;margin-left:auto;}
+.tb-led{width:8px;height:8px;border-radius:50%;}
+.tb-led.g{background:var(--green);box-shadow:var(--gg);}
+.tb-led.a{background:var(--amber);box-shadow:var(--ga);animation:blink 1.2s ease-in-out infinite;}
+.tb-led.r{background:var(--red);box-shadow:var(--gr);}
+.tb-clock{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);margin-left:12px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+/* SIDEBAR */
+#sidebar{grid-column:1;grid-row:2;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 0;overflow-y:auto;}
+.nav-section{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:3px;padding:12px 18px 6px;opacity:.7;}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 18px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:1px;cursor:pointer;border:none;background:transparent;width:100%;border-left:2px solid transparent;transition:all .18s;text-align:left;}
+.nav-btn .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-btn:hover{color:var(--text);background:rgba(0,255,136,.04);border-left-color:var(--green);}
+.nav-btn.active{color:var(--green);background:rgba(0,255,136,.07);border-left-color:var(--green);}
+.nav-btn .badge{margin-left:auto;font-size:9px;padding:1px 6px;background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3);border-radius:2px;}
+.nav-div{height:1px;background:var(--border);margin:10px 16px;}
+.sb-osc{padding:14px 16px 4px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;}
+#sOsc{width:100%;display:block;opacity:.6;}
+/* CONTENT */
+#content{grid-column:2;grid-row:2;overflow-y:auto;overflow-x:hidden;position:relative;}
+#content::-webkit-scrollbar{width:5px;}
+#content::-webkit-scrollbar-track{background:var(--bg);}
+#content::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
+/* STATUSBAR */
+#statusbar{grid-column:1/-1;grid-row:3;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:20px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);}
+.sbi{display:flex;align-items:center;gap:5px;}
+.sl{width:5px;height:5px;border-radius:50%;}
+.sl.g{background:var(--green);animation:blink 2s ease-in-out infinite;}
+.sl.a{background:var(--amber);animation:blink 1.2s ease-in-out infinite;}
+#sbr{margin-left:auto;display:flex;gap:18px;}
+/* PAGES */
+.page{padding:28px 32px 40px;min-height:100%;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;display:none;}
+.page.active{display:block;}
+.page.visible{opacity:1;transform:translateY(0);}
+/* SHARED */
+.ph{margin-bottom:28px;}
+.pt{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:2px;display:flex;align-items:center;gap:12px;}
+.pt::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);margin-left:16px;}
+.ps{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:2px;margin-top:6px;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .15s;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.5;transition:opacity .2s;}
+.card.a::before{background:linear-gradient(90deg,transparent,var(--amber),transparent);}
+.card.c::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.card:hover{border-color:rgba(0,255,136,.3);transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,0,0,.4);}
+.card:hover::before{opacity:1;}
+.card.a:hover{border-color:rgba(255,170,0,.3);}
+.card.c:hover{border-color:rgba(0,204,255,.3);}
+.chip{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;border-radius:2px;border:1px solid rgba(0,255,136,.25);background:rgba(0,255,136,.08);color:var(--green);margin:2px;}
+.chip.a{border-color:rgba(255,170,0,.25);background:rgba(255,170,0,.08);color:var(--amber);}
+.chip.c{border-color:rgba(0,204,255,.25);background:rgba(0,204,255,.08);color:var(--cyan);}
+.chip.d{border-color:var(--border);background:transparent;color:var(--text2);}
+.lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.lbl::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+/* HOME */
+.hero-g{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;}
+.avt{width:100px;height:100px;border-radius:50%;border:2px solid var(--green);box-shadow:var(--gg),inset 0 0 30px rgba(0,255,136,.08);background:radial-gradient(circle at 40% 35%,#1a3a28,#080f0a);display:flex;align-items:center;justify-content:center;font-size:42px;cursor:pointer;animation:ap 4s ease-in-out infinite;flex-shrink:0;}
+@keyframes ap{0%,100%{box-shadow:0 0 10px rgba(0,255,136,.3),0 0 30px rgba(0,255,136,.08)}50%{box-shadow:0 0 24px rgba(0,255,136,.6),0 0 60px rgba(0,255,136,.15)}}
+.hg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+.stt{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:16px;text-align:center;transition:all .2s;cursor:default;}
+.stt:hover{border-color:var(--green);box-shadow:var(--gg);}
+.sn{font-family:'VT323',monospace;font-size:44px;color:var(--green);line-height:1;text-shadow:var(--gg);}
+.sn.a{color:var(--amber);text-shadow:var(--ga);}
+.sn.c{color:var(--cyan);text-shadow:var(--gc);}
+.sl2{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-top:4px;}
+/* TERMINAL */
+.tbox{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:16px;font-family:'Share Tech Mono',monospace;font-size:12px;}
+.ttbar{display:flex;align-items:center;gap:6px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.td{width:10px;height:10px;border-radius:50%;}
+.td.r{background:#ff5f56;}.td.y{background:#ffbd2e;}.td.g{background:#27c93f;}
+.ttitle{font-size:10px;color:var(--text2);margin-left:6px;letter-spacing:1px;}
+#tOut{color:var(--green);line-height:1.9;min-height:80px;}
+#tOut .p{color:var(--amber);}#tOut .o{color:var(--text);}#tOut .d{color:var(--text2);}#tOut .h{color:var(--cyan);}#tOut .e{color:var(--red);}
+.tir{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.tp{color:var(--amber);white-space:nowrap;}
+#tIn{flex:1;background:transparent;border:none;outline:none;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);caret-color:var(--green);}
+.tc{display:inline-block;width:7px;height:12px;background:var(--green);vertical-align:middle;animation:blink 1s step-end infinite;margin-left:2px;}
+/* PROJECTS */
+.pf{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.fb{font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 12px;border-radius:2px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;letter-spacing:1px;transition:all .15s;}
+.fb:hover{border-color:var(--green);color:var(--green);}
+.fb.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.1);box-shadow:var(--gg);}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.pc{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:18px;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;}
+.pc:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.5),var(--gg);}
+.pc.a:hover{border-color:var(--amber);box-shadow:0 8px 32px rgba(0,0,0,.5),var(--ga);}
+.pc.c:hover{border-color:var(--cyan);box-shadow:0 8px 32px rgba(0,0,0,.5),var(--gc);}
+.pc .gl{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:0;transition:opacity .2s;}
+.pc:hover .gl{opacity:1;}
+.pc.a .gl{background:linear-gradient(90deg,transparent,var(--amber),transparent);}
+.pc.c .gl{background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.pni{font-size:26px;margin-bottom:10px;}
+.pn{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:6px;}
+.pd{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.pf2{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+/* MODAL */
+#pm{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:5000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+#pm.open{display:flex;}
+.mi{background:var(--panel);border:1px solid var(--green);box-shadow:var(--gg),0 0 80px rgba(0,255,136,.08);border-radius:4px;padding:28px;max-width:600px;width:90%;position:relative;max-height:85vh;overflow-y:auto;}
+.mc{position:absolute;top:14px;right:16px;font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--red);cursor:pointer;border:1px solid rgba(255,51,85,.4);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:box-shadow .15s;}
+.mc:hover{box-shadow:var(--gr);}
+.mt{font-family:'Orbitron',sans-serif;font-size:18px;color:#fff;margin-bottom:6px;}
+.ms2{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:2px;margin-bottom:20px;}
+.ms{margin-bottom:16px;}
+.ms h4{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;}
+.ms p,.ms li{font-size:13px;color:var(--text2);line-height:1.7;}
+.ms ul{padding-left:16px;}
+.ms li::marker{color:var(--green);}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.si{background:var(--bg2);border:1px solid var(--border);padding:8px 12px;border-radius:2px;}
+.sk{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:1px;}
+.sv{font-size:13px;color:var(--text);font-weight:600;margin-top:2px;}
+/* EXPERIENCE */
+.tl{position:relative;padding-left:32px;}
+.tl::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--green),var(--cyan),transparent);opacity:.4;}
+.ti2{position:relative;margin-bottom:28px;}
+.tdot{position:absolute;left:-26px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:var(--gg);border:2px solid var(--bg);}
+.tdot.a{background:var(--amber);box-shadow:var(--ga);}
+.tdot.c{background:var(--cyan);box-shadow:var(--gc);}
+.td2{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-bottom:6px;}
+.tt{font-family:'Orbitron',sans-serif;font-size:14px;color:#fff;font-weight:700;letter-spacing:1px;}
+.tc2{font-size:13px;color:var(--green);margin-top:2px;font-weight:600;}
+.tc2.a{color:var(--amber);}.tc2.c{color:var(--cyan);}
+.tb2{font-size:13px;color:var(--text2);line-height:1.7;margin-top:8px;}
+.tb2 ul{padding-left:16px;margin-top:6px;}
+.tb2 li{margin-bottom:4px;}
+.tb2 li::marker{color:var(--green);}
+/* SKILLS */
+.sl3{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.sg2 h3{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.sr{margin-bottom:14px;}
+.sm{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:5px;}
+.sm span:last-child{color:var(--green);}
+.sm span.a{color:var(--amber);}.sm span.c{color:var(--cyan);}
+.sbb{height:5px;background:var(--bg2);border:1px solid var(--border);border-radius:1px;overflow:hidden;}
+.sb{height:100%;border-radius:1px;width:0;transition:width 1.4s cubic-bezier(.2,.8,.3,1);}
+.sb.g{background:linear-gradient(90deg,var(--green2),var(--green));box-shadow:var(--gg);}
+.sb.a{background:linear-gradient(90deg,var(--amber2),var(--amber));box-shadow:var(--ga);}
+.sb.c{background:linear-gradient(90deg,var(--cyan2),var(--cyan));box-shadow:var(--gc);}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
+.tc3{background:var(--panel2);border:1px solid var(--border);border-radius:2px;padding:10px 8px;text-align:center;transition:all .18s;cursor:default;}
+.tc3:hover{border-color:var(--green);box-shadow:var(--gg);}
+.tc3 .ti{font-size:20px;display:block;margin-bottom:4px;}
+.tc3 .tn{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:1px;}
+/* BUILD LOG */
+.bl{display:flex;flex-direction:column;gap:14px;}
+.bc{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:18px;cursor:pointer;transition:all .2s;display:flex;gap:16px;align-items:flex-start;}
+.bc:hover{border-color:var(--green);transform:translateX(4px);box-shadow:var(--gg);}
+.bdc{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);white-space:nowrap;text-align:right;min-width:80px;padding-top:2px;}
+.bdc .bd2{font-size:24px;font-family:'VT323',monospace;color:var(--amber);display:block;line-height:1;}
+.bb .bt{font-family:'Orbitron',sans-serif;font-size:13px;color:#fff;margin-bottom:6px;}
+.bb .bd3{font-size:12px;color:var(--text2);line-height:1.6;}
+.bb .btags{margin-top:8px;}
+/* ABOUT */
+.ag{display:grid;grid-template-columns:1fr 280px;gap:20px;}
+.ab p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px;}
+.ab p b{color:var(--text);}
+.ab p em{color:var(--green);font-style:normal;}
+.fl{list-style:none;}
+.fl li{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;}
+.fl li:last-child{border-bottom:none;}
+.fl li::before{content:'▸';color:var(--green);flex-shrink:0;margin-top:1px;}
+/* CONTACT */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.cc{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.cc:hover{border-color:var(--green);box-shadow:var(--gg);transform:translateY(-2px);}
+.ci{font-size:28px;flex-shrink:0;}
+.cit .ct{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;}
+.cit .cv{font-size:14px;color:var(--text);font-weight:600;margin-top:3px;}
+.ab2{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:3px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.ab3{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:var(--gg);animation:blink 1.5s ease-in-out infinite;flex-shrink:0;}
+/* INPUT */
+.inp{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:9px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--green);}
+textarea.inp{resize:vertical;}
+.btn{padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--text2);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.btn:hover{border-color:var(--green);color:var(--green);box-shadow:var(--gg);}
+/* RESPONSIVE */
+@media(max-width:720px){
+  #shell{grid-template-columns:1fr;grid-template-rows:56px 44px 1fr 32px;}
+  #sidebar{grid-column:1;grid-row:2;flex-direction:row;padding:0 8px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border);}
+  .nav-section,.nav-div,.sb-osc{display:none;}
+  .nav-btn{padding:6px 10px;flex-direction:column;gap:2px;font-size:9px;border-left:none;border-bottom:2px solid transparent;min-width:58px;align-items:center;}
+  .nav-btn.active{border-bottom-color:var(--green);border-left:none;}
+  .nav-btn .badge{display:none;}
+  #content{grid-column:1;grid-row:3;}
+  #statusbar{grid-row:4;}
+  .hg,.sl3,.ag,.cg{grid-template-columns:1fr;}
+  .pgrid{grid-template-columns:1fr;}
+  .page{padding:14px 14px 32px;}
+  #sbr span:not(:last-child){display:none;}
+}
+</style>
+</head>
+<body>
+<div id="scanlines"></div>
+<div id="gridbg"></div>
+<canvas id="bgCanvas"></canvas>
+
+<div id="boot">
+  <div id="bootText">
+    <div style="color:#fff;font-size:16px;margin-bottom:8px;">MECHA_PORTFOLIO_OS v3.0.0</div>
+    <div style="color:var(--text2);margin-bottom:16px;">Embedded Systems &amp; Mechatronics Engineering</div>
+    <div id="bootLines"></div>
+  </div>
+  <div id="bootBarWrap"><div id="bootBar"></div></div>
+</div>
+
+<div id="shell">
+  <div id="topbar">
+    <div class="tb-logo">MECHA<span>.DEV</span></div>
+    <div class="tb-sep">|</div>
+    <div id="tb-breadcrumb">root / <span id="tbPage">home</span></div>
+    <div class="tb-leds">
+      <div class="tb-led g"></div>
+      <div class="tb-led a"></div>
+      <div class="tb-led r"></div>
+    </div>
+    <div class="tb-clock" id="tbClock">00:00:00</div>
+  </div>
+
+  <div id="sidebar">
+    <div class="nav-section">MAIN</div>
+    <button class="nav-btn active" data-page="home"><span class="ni">⌂</span> HOME</button>
+    <button class="nav-btn" data-page="projects"><span class="ni">⚙️</span> PROJECTS <span class="badge">6</span></button>
+    <button class="nav-btn" data-page="experience"><span class="ni">📋</span> EXPERIENCE</button>
+    <button class="nav-btn" data-page="skills"><span class="ni">📊</span> SKILLS</button>
+    <div class="nav-div"></div>
+    <div class="nav-section">MORE</div>
+    <button class="nav-btn" data-page="buildlog"><span class="ni">📝</span> BUILD LOG <span class="badge">4</span></button>
+    <button class="nav-btn" data-page="about"><span class="ni">👤</span> ABOUT</button>
+    <button class="nav-btn" data-page="contact"><span class="ni">📡</span> CONTACT</button>
+    <div class="nav-div"></div>
+    <div class="sb-osc">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:2px;margin-bottom:6px;">OSC_CH1</div>
+      <canvas id="sOsc" height="50"></canvas>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="card" style="margin-bottom:20px;">
+        <div class="hero-g">
+          <div class="avt" id="avt" title="Click me!">⚙️</div>
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);letter-spacing:3px;margin-bottom:8px;">&gt;&gt; EMBEDDED SYSTEMS &amp; MECHATRONICS ENGINEER</div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#fff;letter-spacing:3px;line-height:1;text-shadow:0 0 24px rgba(0,255,136,.25);">YOUR<span style="color:var(--green);">.NAME</span></div>
+            <p style="color:var(--text2);font-size:14px;margin-top:10px;line-height:1.7;max-width:480px;">I make hardware talk to software. Designing circuits, writing firmware, and building robots that (usually) do what I want. MCUs, PLCs, sensors, actuators — if it blinks or moves, I'm into it.</p>
+            <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:4px;">
+              <span class="chip">C/C++</span><span class="chip">STM32</span><span class="chip">ESP32</span>
+              <span class="chip a">KiCad</span><span class="chip a">PCB Design</span>
+              <span class="chip c">ROS2</span><span class="chip c">FreeRTOS</span>
+              <span class="chip d">📍 Amman, JO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hg">
+        <div class="stt"><div class="sn">6</div><div class="sl2">PROJECTS</div></div>
+        <div class="stt"><div class="sn a">3+</div><div class="sl2">YEARS EXP</div></div>
+        <div class="stt"><div class="sn c">18</div><div class="sl2">PCBs DESIGNED</div></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="lbl">SERIAL CONSOLE // 115200 BAUD</div>
+        <div class="tbox" style="border:none;padding:0;background:transparent;">
+          <div class="ttbar">
+            <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+            <div class="ttitle">mcu_console — 80×24</div>
+          </div>
+          <div id="tOut">
+            <div><span class="p">MCU&gt;</span> <span class="o">boot_system --init</span></div>
+            <div class="d">Loading peripherals... OK</div>
+            <div class="d">Starting portfolio daemon... OK</div>
+            <div><span class="p">MCU&gt;</span> <span class="o">whoami</span></div>
+            <div class="h">Mechatronics engineer. Firmware developer. Robot whisperer.</div>
+            <div><span class="p">MCU&gt;</span> <span class="tc"></span></div>
+          </div>
+          <div class="tir">
+            <span class="tp">MCU&gt;</span>
+            <input type="text" id="tIn" placeholder="type a command... (try: help)" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+      </div>
+      <div class="card a" style="padding:16px 20px;">
+        <div class="lbl" style="color:var(--amber);">QUICK NAVIGATION</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+          <button class="nav-btn" data-page="projects" style="width:auto;padding:8px 16px;border:1px solid var(--border);border-radius:2px;font-size:11px;">⚙️ VIEW PROJECTS</button>
+          <button class="nav-btn" data-page="experience" style="width:auto;padding:8px 16px;border:1px solid var(--border);border-radius:2px;font-size:11px;">📋 EXPERIENCE</button>
+          <button class="nav-btn" data-page="skills" style="width:auto;padding:8px 16px;border:1px solid var(--border);border-radius:2px;font-size:11px;">📊 SKILLS</button>
+          <button class="nav-btn" data-page="contact" style="width:auto;padding:8px 16px;border:1px solid var(--border);border-radius:2px;font-size:11px;">📡 CONTACT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="page" id="page-projects">
+      <div class="ph"><div class="pt"><span>⚙️</span> PROJECTS</div><div class="ps">// HARDWARE + FIRMWARE + SYSTEMS</div></div>
+      <div class="pf">
+        <button class="fb active" data-filter="all">ALL</button>
+        <button class="fb" data-filter="robotics">ROBOTICS</button>
+        <button class="fb" data-filter="firmware">FIRMWARE</button>
+        <button class="fb" data-filter="pcb">PCB DESIGN</button>
+        <button class="fb" data-filter="iot">IoT / RF</button>
+        <button class="fb" data-filter="power">POWER</button>
+      </div>
+      <div class="pgrid" id="projGrid"></div>
+    </div>
+
+    <!-- EXPERIENCE -->
+    <div class="page" id="page-experience">
+      <div class="ph"><div class="pt"><span>📋</span> EXPERIENCE</div><div class="ps">// WORK HISTORY &amp; EDUCATION</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div class="lbl" style="margin-bottom:18px;">WORK HISTORY</div>
+          <div class="tl">
+            <div class="ti2">
+              <div class="tdot"></div>
+              <div class="td2">2023 — PRESENT</div>
+              <div class="tt">EMBEDDED SYSTEMS ENGINEER</div>
+              <div class="tc2">Robotics Lab, Amman</div>
+              <div class="tb2"><p>Lead firmware developer for autonomous mobile robots.</p>
+                <ul><li>STM32-based motor controller PCBs (4-layer, KiCad)</li><li>FreeRTOS task architecture for real-time control</li><li>ROS2 integration with embedded CAN bus peripherals</li><li>Reduced system latency 40% through DMA optimization</li></ul>
+              </div>
+              <div style="margin-top:10px;"><span class="chip">STM32</span><span class="chip">FreeRTOS</span><span class="chip a">KiCad</span><span class="chip c">ROS2</span></div>
+            </div>
+            <div class="ti2">
+              <div class="tdot a"></div>
+              <div class="td2">2022 — 2023</div>
+              <div class="tt">FIRMWARE INTERN</div>
+              <div class="tc2 a">IoT Startup, Amman</div>
+              <div class="tb2"><p>Firmware for smart building sensor nodes.</p>
+                <ul><li>ESP32 firmware in C++ (Arduino + ESP-IDF)</li><li>BLE &amp; WiFi mesh — 50+ node deployment</li><li>Designed PCB for environmental sensor breakout</li></ul>
+              </div>
+              <div style="margin-top:10px;"><span class="chip">ESP32</span><span class="chip a">BLE</span><span class="chip">MQTT</span></div>
+            </div>
+            <div class="ti2">
+              <div class="tdot c"></div>
+              <div class="td2">2021 — 2022</div>
+              <div class="tt">FREELANCE HW DESIGNER</div>
+              <div class="tc2 c">Self-employed</div>
+              <div class="tb2"><p>Custom electronics and automation projects. PCB layout, enclosure design, and firmware delivery for local clients.</p></div>
+              <div style="margin-top:10px;"><span class="chip c">KiCad</span><span class="chip">Arduino</span><span class="chip d">Fusion360</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="lbl" style="margin-bottom:18px;">EDUCATION</div>
+          <div class="tl">
+            <div class="ti2">
+              <div class="tdot"></div>
+              <div class="td2">2020 — 2024</div>
+              <div class="tt">B.Sc. MECHATRONICS ENGINEERING</div>
+              <div class="tc2">University of Jordan</div>
+              <div class="tb2"><p>Control systems, embedded electronics, robotics. Graduation: autonomous mobile robot with SLAM navigation.</p>
+                <ul><li>GPA: 3.7 / 4.0</li><li>Best Graduation Project Award</li><li>IEEE Student Branch member</li></ul>
+              </div>
+            </div>
+            <div class="ti2">
+              <div class="tdot a"></div>
+              <div class="td2">2023</div>
+              <div class="tt">IPC-A-610 CERTIFIED</div>
+              <div class="tc2 a">PCB Assembly &amp; Quality</div>
+              <div class="tb2"><p>Certified in PCB assembly and quality inspection standards.</p></div>
+            </div>
+            <div class="ti2">
+              <div class="tdot c"></div>
+              <div class="td2">2022</div>
+              <div class="tt">ROS2 DEVELOPER COURSE</div>
+              <div class="tc2 c">The Construct / Online</div>
+              <div class="tb2"><p>Advanced robotics middleware, navigation stack, custom nodes.</p></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="lbl" style="margin-bottom:14px;">ACHIEVEMENTS</div>
+            <div class="card" style="padding:14px 16px;margin-bottom:10px;"><div style="font-size:13px;color:var(--text);font-weight:600;">🏆 IEEE Robotics Competition — 1st Place</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">Regional autonomous vehicle challenge, 2023</div></div>
+            <div class="card a" style="padding:14px 16px;margin-bottom:10px;"><div style="font-size:13px;color:var(--text);font-weight:600;">📄 Published — IEEE EMBC 2024</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">EMG-based exoskeleton knee joint control</div></div>
+            <div class="card c" style="padding:14px 16px;"><div style="font-size:13px;color:var(--text);font-weight:600;">⚡ Hackathon Winner — Hardware Track</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">Built 4-hour power blackout detector + notifier</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="page" id="page-skills">
+      <div class="ph"><div class="pt"><span>📊</span> SKILLS</div><div class="ps">// PROFICIENCY INDEX // LAST CALIBRATED 2024</div></div>
+      <div class="sl3">
+        <div class="sg2 card">
+          <h3>FIRMWARE &amp; SOFTWARE</h3>
+          <div class="sr"><div class="sm"><span>Embedded C / C++</span><span>92%</span></div><div class="sbb"><div class="sb g" data-w="92"></div></div></div>
+          <div class="sr"><div class="sm"><span>FreeRTOS / Zephyr</span><span class="a">82%</span></div><div class="sbb"><div class="sb a" data-w="82"></div></div></div>
+          <div class="sr"><div class="sm"><span>Python (scripting)</span><span class="c">75%</span></div><div class="sbb"><div class="sb c" data-w="75"></div></div></div>
+          <div class="sr"><div class="sm"><span>ROS2 Middleware</span><span class="c">72%</span></div><div class="sbb"><div class="sb c" data-w="72"></div></div></div>
+          <div class="sr"><div class="sm"><span>MATLAB / Simulink</span><span class="a">68%</span></div><div class="sbb"><div class="sb a" data-w="68"></div></div></div>
+        </div>
+        <div class="sg2 card a">
+          <h3 style="color:var(--amber);">HARDWARE &amp; ELECTRONICS</h3>
+          <div class="sr"><div class="sm"><span>Comm. Protocols (I2C/SPI/CAN/UART)</span><span>95%</span></div><div class="sbb"><div class="sb g" data-w="95"></div></div></div>
+          <div class="sr"><div class="sm"><span>PCB Design (KiCad / Altium)</span><span class="a">86%</span></div><div class="sbb"><div class="sb a" data-w="86"></div></div></div>
+          <div class="sr"><div class="sm"><span>Power Electronics / Motor Drivers</span><span class="a">80%</span></div><div class="sbb"><div class="sb a" data-w="80"></div></div></div>
+          <div class="sr"><div class="sm"><span>Analog Circuit Design</span><span>74%</span></div><div class="sbb"><div class="sb g" data-w="74"></div></div></div>
+          <div class="sr"><div class="sm"><span>RF / Wireless (LoRa, BLE, WiFi)</span><span class="c">70%</span></div><div class="sbb"><div class="sb c" data-w="70"></div></div></div>
+        </div>
+        <div class="sg2 card c">
+          <h3 style="color:var(--cyan);">MECHANICAL &amp; SYSTEMS</h3>
+          <div class="sr"><div class="sm"><span>Control Systems &amp; PID Tuning</span><span>88%</span></div><div class="sbb"><div class="sb g" data-w="88"></div></div></div>
+          <div class="sr"><div class="sm"><span>3D CAD (SolidWorks / Fusion360)</span><span class="c">78%</span></div><div class="sbb"><div class="sb c" data-w="78"></div></div></div>
+          <div class="sr"><div class="sm"><span>Kinematics &amp; Robot Dynamics</span><span class="a">76%</span></div><div class="sbb"><div class="sb a" data-w="76"></div></div></div>
+          <div class="sr"><div class="sm"><span>Sensor Fusion (IMU/GPS/LiDAR)</span><span>72%</span></div><div class="sbb"><div class="sb g" data-w="72"></div></div></div>
+          <div class="sr"><div class="sm"><span>SLAM / Navigation</span><span class="c">65%</span></div><div class="sbb"><div class="sb c" data-w="65"></div></div></div>
+        </div>
+        <div class="sg2 card">
+          <h3>TOOLS &amp; WORKFLOW</h3>
+          <div class="tgrid">
+            <div class="tc3"><span class="ti">🔧</span><span class="tn">KiCad</span></div>
+            <div class="tc3"><span class="ti">⚡</span><span class="tn">STM32CubeIDE</span></div>
+            <div class="tc3"><span class="ti">📡</span><span class="tn">ESP-IDF</span></div>
+            <div class="tc3"><span class="ti">📦</span><span class="tn">Git</span></div>
+            <div class="tc3"><span class="ti">🐧</span><span class="tn">Linux</span></div>
+            <div class="tc3"><span class="ti">📐</span><span class="tn">SolidWorks</span></div>
+            <div class="tc3"><span class="ti">🔬</span><span class="tn">Logic Analyzer</span></div>
+            <div class="tc3"><span class="ti">📊</span><span class="tn">Oscilloscope</span></div>
+            <div class="tc3"><span class="ti">🤖</span><span class="tn">ROS2</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILD LOG -->
+    <div class="page" id="page-buildlog">
+      <div class="ph"><div class="pt"><span>📝</span> BUILD LOG</div><div class="ps">// FIELD NOTES FROM THE BENCH</div></div>
+      <div class="bl">
+        <div class="bc"><div class="bdc"><span class="bd2">12</span>NOV 2024</div><div class="bb"><div class="bt">Debugging a weird I2C clock stretching issue on STM32H7</div><div class="bd3">Spent 6 hours on what turned out to be a pull-up resistor value. The STM32H7's I2C peripheral is extra sensitive at 400kHz...</div><div class="btags"><span class="chip">STM32</span><span class="chip">I2C</span><span class="chip d">Debug</span></div></div></div>
+        <div class="bc"><div class="bdc"><span class="bd2">03</span>OCT 2024</div><div class="bb"><div class="bt">Why I switched from Arduino to Zephyr RTOS and never looked back</div><div class="bd3">Arduino is great for prototyping. But once you need real-time guarantees and deterministic scheduling, you need an RTOS...</div><div class="btags"><span class="chip">Zephyr</span><span class="chip">RTOS</span><span class="chip a">Opinion</span></div></div></div>
+        <div class="bc"><div class="bdc"><span class="bd2">18</span>SEP 2024</div><div class="bb"><div class="bt">Building a custom BLDC driver from scratch — schematic to spin</div><div class="bd3">Three-phase gate driver, bootstrap caps, current sensing, and field-oriented control. Full walkthrough of my BLDC board...</div><div class="btags"><span class="chip c">BLDC</span><span class="chip c">FOC</span><span class="chip a">KiCad</span></div></div></div>
+        <div class="bc"><div class="bdc"><span class="bd2">07</span>AUG 2024</div><div class="bb"><div class="bt">PCB layout tips for high-frequency switching circuits</div><div class="bd3">Hot components, EMI failures, and ground plane nightmares. Everything I wish someone told me before my first SMPS board...</div><div class="btags"><span class="chip a">PCB</span><span class="chip a">EMI</span><span class="chip">Power</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="page" id="page-about">
+      <div class="ph"><div class="pt"><span>👤</span> ABOUT</div><div class="ps">// HUMAN READABLE FORMAT</div></div>
+      <div class="ag">
+        <div class="ab">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="lbl">BIO_DATA</div>
+            <p>I'm a <em>mechatronics engineer</em> based in <b>Amman, Jordan</b> who loves the intersection of hardware and software. My work lives at the boundary where circuits meet code — writing firmware for microcontrollers, designing PCBs, and building robots.</p>
+            <p>I got into embedded systems because I was fascinated by how a few lines of C could make a motor spin at exactly the right speed, or make a sensor network report back live data from across a field. That magic still drives me.</p>
+            <p>When I'm not at my desk, you'll find me <em>soldering something</em>, reading datasheets (yes, for fun), or arguing about the correct way to do I2C pull-up calculations.</p>
+          </div>
+          <div class="card a">
+            <div class="lbl" style="color:var(--amber);">QUICK FACTS</div>
+            <ul class="fl">
+              <li>Based in Amman, Jordan 🇯🇴</li>
+              <li>B.Sc. Mechatronics Engineering, University of Jordan (2024)</li>
+              <li>Primary language: C/C++ on embedded targets</li>
+              <li>Favorite MCU: STM32 H7 series</li>
+              <li>Currently obsessed with: Zephyr RTOS &amp; custom BLDC drives</li>
+              <li>All PCB projects open-source on GitHub</li>
+              <li>Daily carry: logic analyzer + multimeter</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card c">
+            <div class="lbl" style="color:var(--cyan);">CURRENT STATUS</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:var(--gg);animation:blink 1.5s ease-in-out infinite;"></div><span style="font-size:13px;color:var(--green);font-weight:600;">Open to opportunities</span></div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.6;">Looking for embedded systems or mechatronics roles. Open to remote, relocation, or freelance.</p>
+          </div>
+          <div class="card">
+            <div class="lbl">LANGUAGES</div>
+            <div style="font-size:13px;color:var(--text2);line-height:2.1;">🇯🇴 Arabic — Native<br>🇬🇧 English — Fluent (C1)<br>💻 C/C++ — Fluent<br>🐍 Python — Conversational</div>
+          </div>
+          <div class="card a">
+            <div class="lbl" style="color:var(--amber);">INTERESTS</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+              <span class="chip a">Robotics</span><span class="chip a">Power Electronics</span><span class="chip">FPGA</span><span class="chip">RF / SDR</span><span class="chip c">Open Hardware</span><span class="chip c">Control Theory</span><span class="chip d">3D Printing</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="lbl">LAB SETUP</div>
+            <div style="font-size:12px;color:var(--text2);line-height:2.0;">🖥️ Linux (Arch) + Windows dual boot<br>⚡ STM32CubeIDE + VSCode<br>📐 KiCad 8<br>🔬 Rigol DS1054Z oscilloscope<br>📡 Saleae Logic Pro 8<br>☕ Moka pot, always</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="page" id="page-contact">
+      <div class="ph"><div class="pt"><span>📡</span> CONTACT</div><div class="ps">// TRANSMISSION CHANNELS // RESPONSE &lt;24H</div></div>
+      <div class="ab2"><div class="ab3"></div><div style="font-size:13px;color:var(--text2);"><b style="color:var(--green);">Currently available</b> for freelance projects, full-time roles, and interesting collaborations.</div></div>
+      <div class="cg">
+        <div class="cc card"><div class="ci">📧</div><div class="cit"><div class="ct">EMAIL</div><div class="cv">your@email.com</div></div></div>
+        <div class="cc card a"><div class="ci">🐙</div><div class="cit"><div class="ct">GITHUB</div><div class="cv">github.com/yourhandle</div></div></div>
+        <div class="cc card c"><div class="ci">💼</div><div class="cit"><div class="ct">LINKEDIN</div><div class="cv">linkedin.com/in/yourname</div></div></div>
+        <div class="cc card"><div class="ci">🐦</div><div class="cit"><div class="ct">TWITTER / X</div><div class="cv">@yourhandle</div></div></div>
+      </div>
+      <div class="card" style="max-width:520px;">
+        <div class="lbl">SEND A MESSAGE</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+          <div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-bottom:6px;">YOUR NAME</div><input class="inp" type="text" placeholder="John Doe"></div>
+          <div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-bottom:6px;">EMAIL</div><input class="inp" type="email" placeholder="you@example.com"></div>
+          <div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-bottom:6px;">MESSAGE</div><textarea class="inp" rows="4" placeholder="Your message..."></textarea></div>
+          <button class="btn" id="sendBtn">TRANSMIT &gt;&gt;</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div id="statusbar">
+    <div class="sbi"><div class="sl g"></div><span id="sbPage">HOME</span></div>
+    <div class="sbi"><div class="sl a"></div><span>COFFEE: BREWING</span></div>
+    <div class="sbi"><div class="sl g"></div><span>UART: OK</span></div>
+    <div id="sbr">
+      <span id="sbVolt">VCC: 3.30V</span>
+      <span>UTF-8</span>
+      <span>CRLF</span>
+      <span style="color:var(--green);">⚙️ MECHA.DEV</span>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div id="pm">
+  <div class="mi">
+    <div class="mc" onclick="closeModal()">✕</div>
+    <div class="mt" id="mT"></div>
+    <div class="ms2" id="mS"></div>
+    <div id="mB"></div>
+  </div>
+</div>
+
+<script>
+// DATA
+const projs=[
+  {id:'p1',icon:'🤖',name:'HEXAPOD MK-II',col:'',desc:'18-DOF walking robot with real-time inverse kinematics and terrain adaptation.',tags:['STM32','C++','IK','FreeRTOS'],tc:['','','',''],status:'DEPLOYED',sc:'var(--green)',cat:['robotics','firmware'],specs:[{k:'MCU',v:'STM32F446 @ 180MHz'},{k:'DOF',v:'18 (6 legs × 3)'},{k:'Comm',v:'CAN bus @ 1Mbps'},{k:'Battery',v:'4S LiPo 60min'}],detail:'Built from scratch. Chassis in SolidWorks, PCB in KiCad (4-layer). FreeRTOS with dedicated kinematics task at 500Hz.',bullets:['Custom IK solver — no FP library','Terrain adapt via IMU + foot sensors','CAN bus for distributed servo control','WiFi co-processor telemetry dashboard']},
+  {id:'p2',icon:'⚡',name:'MPPT SOLAR CTRL',col:'a',desc:'Custom solar charge controller with 94% efficiency and CAN bus telemetry.',tags:['ESP32','Power','CAN','KiCad'],tc:['','a','a','a'],status:'DEPLOYED',sc:'var(--green)',cat:['firmware','power','pcb'],specs:[{k:'MCU',v:'ESP32-S3'},{k:'Topology',v:'Sync Buck @ 200kHz'},{k:'Efficiency',v:'94.2% peak'},{k:'Max Input',v:'40V / 20A'}],detail:'Custom inductor winding. Si8233 gate driver. 4-layer PCB with thermal relief on FETs. Handles 800W peak.',bullets:['Perturb & Observe MPPT','CAN bus telemetry','OLED + SD datalogging','Coulomb counting state estimation']},
+  {id:'p3',icon:'🌊',name:'UNDERWATER ROV',col:'c',desc:'Tethered ROV with 4 thrusters, depth sensor, and 1080p live video to 30m.',tags:['ROS2','RPi4','IMU','OpenCV'],tc:['c','c','',''],status:'TESTING',sc:'var(--amber)',cat:['robotics','firmware','iot'],specs:[{k:'Brain',v:'RPi4 + Arduino Nano'},{k:'Thrusters',v:'4× T200'},{k:'Depth',v:'30m rated (20m tested)'},{k:'Video',v:'1080p H.264 <200ms'}],detail:'50m armored Cat6 tether. Custom ROS2 nodes for thruster mixing, heading hold PID, and depth control.',bullets:['Thruster mixing matrix 4-DOF','Depth hold PID ±5cm','GStreamer live video pipeline','Bar30 depth + BNO085 IMU fusion']},
+  {id:'p4',icon:'🔬',name:'µCURRENT PROBE',col:'',desc:'Ultra-low noise current measurement PCB for power profiling IoT devices.',tags:['KiCad','Analog','SMD','INA228'],tc:['a','','',''],status:'OPEN SOURCE',sc:'var(--cyan)',cat:['pcb','firmware'],specs:[{k:'Range',v:'1µA – 1A auto'},{k:'Noise',v:'< 50nA RMS'},{k:'Interface',v:'BNC + I2C digital'},{k:'Power',v:'CR2032 coin cell'}],detail:'Designed for profiling ESP32 / nRF52 during sleep/wake cycles. 4-layer PCB shielded trace routing. Open-source.',bullets:['INA228 precision ADC','Auto-ranging 1µA to 1A','USB-C for PC logging','KiCad project MIT license']},
+  {id:'p5',icon:'🦾',name:'EXOSKELETON KNEE',col:'a',desc:'Assistive knee exo with EMG intent detection and PID torque control.',tags:['STM32G4','EMG','PID','BLDC'],tc:['','a','a',''],status:'PUBLISHED',sc:'var(--cyan)',cat:['robotics','firmware'],specs:[{k:'Actuation',v:'24V BLDC + planetary'},{k:'EMG channels',v:'4 (MyoWare 2.0)'},{k:'Control',v:'PID torque @ 2kHz'},{k:'Published',v:'IEEE EMBC 2024'}],detail:'Research project. EMG preprocessed on STM32G4. Gait phase from IMU data. Published IEEE EMBC 2024.',bullets:['Envelope detect + threshold classifier','Cable-driven backdrivable actuation','Emergency stop hardware interlock','IEEE EMBC 2024 publication']},
+  {id:'p6',icon:'📡',name:'LoRa MESH NET',col:'c',desc:'Self-healing LoRa mesh network for remote sensing over 15km.',tags:['LoRa','STM32L0','RTOS','RF'],tc:['c','','c','c'],status:'DEPLOYED',sc:'var(--green)',cat:['iot','firmware'],specs:[{k:'Module',v:'SX1276 @ 868MHz'},{k:'Range',v:'15km LOS tested'},{k:'Nodes',v:'12 deployed'},{k:'Battery',v:'~2 years (AA cells)'}],detail:'Self-healing mesh: reroutes within 3 hops on node failure. Environmental monitoring in nature reserve.',bullets:['Custom TDMA mesh routing','STM32L0 < 2µA sleep','Auto-rerouting on failure','Temp/humidity/soil/light payload']}
+];
+
+// BOOT
+const bLines=['Loading kernel modules...','Initializing GPIO...','Mounting filesystem...','Starting I2C @ 400kHz...','Starting SPI @ 8MHz...','Loading project manifest (6 entries)...','Calibrating skill matrix...','All systems nominal. BOOT COMPLETE ✓'];
+let bi=0;
+const bLinesEl=document.getElementById('bootLines'),bBar=document.getElementById('bootBar'),bScreen=document.getElementById('boot'),shell=document.getElementById('shell');
+function bootStep(){
+  if(bi<bLines.length){bLinesEl.innerHTML+=`<div>${bLines[bi]}</div>`;bBar.style.width=`${((bi+1)/bLines.length)*100}%`;bi++;setTimeout(bootStep,180+Math.random()*140);}
+  else{setTimeout(()=>{bScreen.style.opacity='0';setTimeout(()=>{bScreen.style.display='none';shell.classList.add('visible');animateSkillBars();renderProjs('all');},600);},400);}
+}
+setTimeout(bootStep,300);
+
+// CLOCK
+function tick(){document.getElementById('tbClock').textContent=new Date().toTimeString().slice(0,8);}
+tick();setInterval(tick,1000);
+
+// NAVIGATION
+function navigate(pid){
+  document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active','visible');});
+  document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===pid));
+  const pg=document.getElementById('page-'+pid);
+  if(!pg)return;
+  pg.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+  setTimeout(()=>pg.classList.add('visible'),20);
+  document.getElementById('tbPage').textContent=pid;
+  document.getElementById('sbPage').textContent=pid.toUpperCase();
+  if(pid==='skills')setTimeout(animateSkillBars,200);
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+setTimeout(()=>document.getElementById('page-home').classList.add('visible'),80);
+
+// PROJECTS
+function renderProjs(filter){
+  const g=document.getElementById('projGrid');
+  const list=filter==='all'?projs:projs.filter(p=>p.cat.includes(filter));
+  g.innerHTML=list.map(p=>`
+    <div class="pc ${p.col}" onclick="openModal('${p.id}')">
+      <div class="gl"></div>
+      <div class="pni">${p.icon}</div>
+      <div class="pn">${p.name}</div>
+      <div class="pd">${p.desc}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:12px;">${p.tags.map((t,i)=>`<span class="chip ${p.tc[i]||''}">${t}</span>`).join('')}</div>
+      <div class="pf2">
+        <div style="display:flex;align-items:center;gap:5px;"><div style="width:5px;height:5px;border-radius:50%;background:${p.sc};box-shadow:0 0 6px ${p.sc};"></div><span style="color:${p.sc};font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;">${p.status}</span></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);">CLICK FOR DETAILS →</span>
+      </div>
+    </div>`).join('');
+}
+document.querySelectorAll('.fb').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.fb').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderProjs(b.dataset.filter);}));
+
+function openModal(id){
+  const p=projs.find(x=>x.id===id);if(!p)return;
+  document.getElementById('mT').textContent=p.icon+' '+p.name;
+  document.getElementById('mS').textContent='// '+p.cat.map(c=>c.toUpperCase()).join(' / ');
+  document.getElementById('mB').innerHTML=`
+    <div class="ms"><h4>SPECIFICATIONS</h4><div class="sg">${p.specs.map(s=>`<div class="si"><div class="sk">${s.k}</div><div class="sv">${s.v}</div></div>`).join('')}</div></div>
+    <div class="ms"><h4>OVERVIEW</h4><p>${p.detail}</p></div>
+    <div class="ms"><h4>KEY FEATURES</h4><ul>${p.bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>
+    <div style="margin-top:14px;">${p.tags.map((t,i)=>`<span class="chip ${p.tc[i]||''}">${t}</span>`).join('')}</div>`;
+  document.getElementById('pm').classList.add('open');
+}
+function closeModal(){document.getElementById('pm').classList.remove('open');}
+document.getElementById('pm').addEventListener('click',e=>{if(e.target===document.getElementById('pm'))closeModal();});
+
+// SKILL BARS
+function animateSkillBars(){document.querySelectorAll('.sb').forEach(b=>setTimeout(()=>{b.style.width=b.dataset.w+'%';},200+Math.random()*400));}
+
+// TERMINAL
+const cmds={
+  help:()=>`<span style="color:var(--cyan)">Commands:</span><br><span class="d"> whoami · skills · projects · experience · contact · buildlog · about · clear · ping · coffee · sudo · ls</span>`,
+  whoami:()=>`<span class="h">Mechatronics engineer. Firmware developer. Robot whisperer.</span><br><span class="d">Location: Amman, Jordan // UTC+3</span>`,
+  skills:()=>{navigate('skills');return`<span class="h">→ /skills</span>`;},
+  projects:()=>{navigate('projects');return`<span class="h">→ /projects</span>`;},
+  experience:()=>{navigate('experience');return`<span class="h">→ /experience</span>`;},
+  contact:()=>{navigate('contact');return`<span class="h">→ /contact</span>`;},
+  buildlog:()=>{navigate('buildlog');return`<span class="h">→ /buildlog</span>`;},
+  about:()=>{navigate('about');return`<span class="h">→ /about</span>`;},
+  ping:()=>`<span style="color:var(--amber)">PING github.com</span><br><span class="d">64 bytes: time=11ms TTL=56<br><span class="h">0% packet loss</span></span>`,
+  coffee:()=>`<span style="color:var(--amber)">☕ ████████████ 100% — READY</span>`,
+  sudo:()=>`<span class="e">Permission denied.</span>`,
+  clear:()=>'__clear__',
+  ls:()=>`<span class="d">projects/ experience/ skills/ buildlog/ about/ contact/ resume.pdf</span>`,
+  matrix:()=>`<span class="h">Wake up, Neo...</span>`,
+  uname:()=>`<span class="d">MECHA_OS 3.0 #1 SMP ARM Cortex-M7</span>`,
+};
+const tOut=document.getElementById('tOut'),tIn=document.getElementById('tIn');
+tIn.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const v=tIn.value.trim().toLowerCase();tIn.value='';if(!v)return;
+  const fn=cmds[v];
+  let r=fn?fn():`<span class="e">not found: ${v}</span> <span class="d">(try: help)</span>`;
+  if(r==='__clear__'){tOut.innerHTML='<div class="d">Console cleared.</div><div><span class="p">MCU&gt;</span> <span class="tc"></span></div>';return;}
+  const last=tOut.lastElementChild;if(last)last.remove();
+  tOut.innerHTML+=`<div><span class="p">MCU&gt;</span> <span class="o">${v}</span></div><div>${r}</div><div><span class="p">MCU&gt;</span> <span class="tc"></span></div>`;
+});
+
+// SEND BTN
+document.getElementById('sendBtn').addEventListener('click',function(){this.textContent='✓ TRANSMITTED';this.style.borderColor='var(--green)';this.style.color='var(--green)';});
+
+// BG PARTICLES
+const bgC=document.getElementById('bgCanvas'),bgX=bgC.getContext('2d');
+let parts=[];
+function rsz(){bgC.width=innerWidth;bgC.height=innerHeight;}rsz();window.addEventListener('resize',rsz);
+for(let i=0;i<50;i++)parts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.4+.3,c:Math.random()>.7?'#ffaa00':Math.random()>.5?'#00ccff':'#00ff88',a:Math.random()*.3+.05});
+function drawBg(){bgX.clearRect(0,0,bgC.width,bgC.height);parts.forEach(p=>{bgX.beginPath();bgX.arc(p.x,p.y,p.r,0,Math.PI*2);bgX.fillStyle=p.c;bgX.globalAlpha=p.a;bgX.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=bgC.width;if(p.x>bgC.width)p.x=0;if(p.y<0)p.y=bgC.height;if(p.y>bgC.height)p.y=0;});bgX.globalAlpha=1;requestAnimationFrame(drawBg);}
+drawBg();
+
+// SIDEBAR OSCILLOSCOPE
+const sC=document.getElementById('sOsc'),sX=sC.getContext('2d');
+let sT=0,sM=0;setInterval(()=>sM=(sM+1)%4,3500);
+function drawSOsc(){
+  const W=sC.offsetWidth||200,H=50;sC.width=W;sC.height=H;sX.clearRect(0,0,W,H);
+  sX.strokeStyle='rgba(0,255,136,.06)';sX.lineWidth=1;
+  for(let x=0;x<W;x+=20){sX.beginPath();sX.moveTo(x,0);sX.lineTo(x,H);sX.stroke();}
+  for(let y=0;y<H;y+=12){sX.beginPath();sX.moveTo(0,y);sX.lineTo(W,y);sX.stroke();}
+  sX.beginPath();sX.strokeStyle='#00ff88';sX.lineWidth=1.2;sX.shadowBlur=4;sX.shadowColor='#00ff88';
+  for(let x=0;x<W;x++){const t=(x/W*6+sT)*Math.PI*2;let y=sM===0?(Math.sin(t)>0?1:-1)*.8:sM===1?Math.sin(t)*.75+Math.sin(t*3.1)*.1:sM===2?(Math.sin(t*2)>.2?.8:-.8)*.9:Math.sin(t)*.6;const py=H/2-y*(H/2-5);x===0?sX.moveTo(x,py):sX.lineTo(x,py);}
+  sX.stroke();sX.shadowBlur=0;sT+=.009;requestAnimationFrame(drawSOsc);
+}
+drawSOsc();
+
+// VOLTMETER
+let vv=3.30,vd=1;setInterval(()=>{vv+=vd*(Math.random()*.012);if(vv>3.35)vd=-1;if(vv<3.25)vd=1;document.getElementById('sbVolt').textContent=`VCC: ${vv.toFixed(2)}V`;},300);
+
+// AVATAR
+const emojis=['⚙️','🔧','💡','🔌','⚡','🤖','🛠️','📡','🎛️','🔬','🦾'];
+let ac=0;document.getElementById('avt').addEventListener('click',()=>{ac++;document.getElementById('avt').textContent=emojis[ac%emojis.length];});
+</script>
+</body>
+</html>
