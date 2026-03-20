@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MECHA.DEV — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060810;--panel:#0c1420;--panel2:#101a28;--border:#1a2e42;
+  --green:#00ff88;--green2:#00cc66;--amber:#ffaa00;--cyan:#00ccff;--red:#ff3355;
+  --text:#c8d8e8;--text2:#6888a0;
+  --gg:0 0 8px rgba(0,255,136,.4);--ga:0 0 8px rgba(255,170,0,.4);--gc:0 0 8px rgba(0,204,255,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;}
+body{display:flex;flex-direction:column;}
+
+/* TOP BAR */
+#topbar{
+  background:var(--panel);border-bottom:2px solid var(--border);
+  padding:0 28px;height:56px;display:flex;align-items:center;gap:16px;
+  position:sticky;top:0;z-index:100;
+}
+#topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.5;}
+.logo{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#fff;letter-spacing:2px;}
+.logo span{color:var(--amber);}
+.badge-admin{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;
+  background:rgba(255,170,0,.12);border:1px solid rgba(255,170,0,.3);color:var(--amber);border-radius:2px;letter-spacing:2px;}
+.tb-right{margin-left:auto;display:flex;gap:10px;align-items:center;}
+.btn{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;padding:7px 16px;
+  border-radius:2px;cursor:pointer;transition:all .15s;border:1px solid var(--border);
+  background:transparent;color:var(--text2);}
+.btn:hover{border-color:var(--green);color:var(--green);box-shadow:var(--gg);}
+.btn.primary{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08);}
+.btn.primary:hover{background:rgba(0,255,136,.15);box-shadow:var(--gg);}
+.btn.danger{border-color:rgba(255,51,85,.4);color:var(--red);}
+.btn.danger:hover{background:rgba(255,51,85,.08);box-shadow:0 0 8px rgba(255,51,85,.3);}
+.btn.amber{border-color:rgba(255,170,0,.4);color:var(--amber);}
+.btn.amber:hover{background:rgba(255,170,0,.08);box-shadow:var(--ga);}
+#saveStatus{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;}
+#saveStatus.ok{color:var(--green);}
+#saveStatus.err{color:var(--red);}
+
+/* LAYOUT */
+#app{display:flex;flex:1;min-height:calc(100vh - 56px);}
+
+/* SIDEBAR */
+#sidebar{
+  width:200px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+  padding:16px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
+}
+.nav-sec{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);
+  letter-spacing:3px;padding:14px 16px 6px;opacity:.6;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 16px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:1px;
+  cursor:pointer;border-left:2px solid transparent;transition:all .15s;user-select:none;}
+.nav-item:hover{color:var(--text);background:rgba(255,170,0,.04);border-left-color:rgba(255,170,0,.3);}
+.nav-item.active{color:var(--amber);background:rgba(255,170,0,.07);border-left-color:var(--amber);}
+.nav-item .ni{width:18px;text-align:center;}
+
+/* MAIN CONTENT */
+#main{flex:1;padding:28px 32px;max-width:900px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* SECTION HEADER */
+.sec-header{margin-bottom:24px;}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;
+  letter-spacing:2px;display:flex;align-items:center;gap:12px;}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);margin-left:16px;}
+.sec-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);
+  letter-spacing:2px;margin-top:6px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:3px;
+  padding:20px;margin-bottom:16px;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.4;}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:16px;}
+.field-row{display:grid;gap:16px;margin-bottom:16px;}
+.field-row.col2{grid-template-columns:1fr 1fr;}
+.field-row.col3{grid-template-columns:1fr 1fr 1fr;}
+label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);
+  letter-spacing:1px;display:block;margin-bottom:6px;}
+input[type=text],input[type=email],input[type=url],input[type=number],textarea,select{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;
+  padding:9px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;
+  outline:none;transition:border-color .2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--amber);}
+textarea{resize:vertical;min-height:80px;}
+select{cursor:pointer;}
+select option{background:var(--panel);}
+.hint{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);
+  opacity:.7;margin-top:5px;letter-spacing:.5px;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.toggle{position:relative;width:40px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.slider{position:absolute;inset:0;background:var(--border);border-radius:20px;cursor:pointer;transition:.2s;}
+.slider::before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;
+  background:var(--text2);border-radius:50%;transition:.2s;}
+.toggle input:checked + .slider{background:var(--green);}
+.toggle input:checked + .slider::before{transform:translateX(20px);background:#fff;}
+.toggle-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:1px;}
+
+/* LIST ITEMS (projects, buildlog etc) */
+.list-item{background:var(--panel2);border:1px solid var(--border);border-radius:3px;
+  padding:16px;margin-bottom:12px;position:relative;}
+.list-item-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.list-item-title{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);
+  flex:1;letter-spacing:1px;}
+.item-actions{display:flex;gap:6px;margin-left:auto;}
+.icon-btn{width:28px;height:28px;border:1px solid var(--border);background:transparent;
+  color:var(--text2);border-radius:2px;cursor:pointer;font-size:12px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.icon-btn:hover{border-color:var(--red);color:var(--red);}
+.icon-btn.up:hover{border-color:var(--cyan);color:var(--cyan);}
+.icon-btn.dn:hover{border-color:var(--cyan);color:var(--cyan);}
+.collapsible{display:none;}
+.collapsible.open{display:block;}
+.list-item.expanded .list-item-header{border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:0;}
+.expand-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;
+  border:1px solid var(--border);background:transparent;color:var(--text2);
+  border-radius:2px;cursor:pointer;transition:all .15s;letter-spacing:1px;}
+.expand-btn:hover{border-color:var(--amber);color:var(--amber);}
+.expand-btn.open{border-color:var(--amber);color:var(--amber);}
+.form-inside{padding-top:16px;}
+
+/* ARRAY FIELD (bullets, chips etc) */
+.array-field{}
+.array-item{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.array-item input{flex:1;}
+.add-item-btn{font-family:'Share Tech Mono',monospace;font-size:10px;
+  padding:5px 12px;border:1px dashed var(--border);background:transparent;
+  color:var(--text2);border-radius:2px;cursor:pointer;transition:all .15s;
+  width:100%;margin-top:4px;letter-spacing:1px;}
+.add-item-btn:hover{border-color:var(--green);color:var(--green);}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* COLOR SELECT */
+.color-select{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.color-opt{width:28px;height:28px;border-radius:2px;cursor:pointer;
+  border:2px solid transparent;transition:.15s;
+  display:flex;align-items:center;justify-content:center;font-size:10px;
+  font-family:'Share Tech Mono',monospace;}
+.color-opt.selected{border-color:#fff;}
+.color-opt[data-val=""]{background:rgba(0,255,136,.1);color:var(--green);border-color:rgba(0,255,136,.3);}
+.color-opt[data-val="a"]{background:rgba(255,170,0,.1);color:var(--amber);border-color:rgba(255,170,0,.3);}
+.color-opt[data-val="c"]{background:rgba(0,204,255,.1);color:var(--cyan);border-color:rgba(0,204,255,.3);}
+.color-opt.selected[data-val=""]{border-color:var(--green);box-shadow:var(--gg);}
+.color-opt.selected[data-val="a"]{border-color:var(--amber);box-shadow:var(--ga);}
+.color-opt.selected[data-val="c"]{border-color:var(--cyan);box-shadow:var(--gc);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--panel);border:1px solid var(--green);
+  color:var(--green);font-family:'Share Tech Mono',monospace;font-size:12px;padding:12px 20px;
+  border-radius:3px;box-shadow:var(--gg);z-index:9999;opacity:0;transform:translateY(10px);
+  transition:all .3s;pointer-events:none;letter-spacing:1px;}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.err{border-color:var(--red);color:var(--red);box-shadow:0 0 8px rgba(255,51,85,.4);}
+
+/* JSON EDITOR */
+#jsonEditor{width:100%;min-height:400px;background:var(--bg);border:1px solid var(--border);
+  border-radius:3px;padding:16px;color:var(--green);font-family:'Share Tech Mono',monospace;
+  font-size:12px;line-height:1.7;outline:none;resize:vertical;}
+#jsonEditor:focus{border-color:var(--amber);}
+
+/* PREVIEW LINK */
+.preview-bar{background:var(--panel2);border:1px solid var(--border);border-radius:3px;
+  padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.preview-bar a{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;
+  letter-spacing:1px;text-decoration:none;}
+.preview-bar a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">MECHA<span>.ADMIN</span></div>
+  <div class="badge-admin">CONTROL PANEL</div>
+  <div class="tb-right">
+    <span id="saveStatus">— unsaved changes</span>
+    <button class="btn amber" onclick="loadFromFile()">📂 LOAD JSON</button>
+    <button class="btn primary" onclick="exportJSON()">💾 EXPORT JSON</button>
+    <button class="btn" onclick="copyJSON()">📋 COPY JSON</button>
+  </div>
+</div>
+
+<div id="app">
+  <div id="sidebar">
+    <div class="nav-sec">SITE CONFIG</div>
+    <div class="nav-item active" data-sec="meta"><span class="ni">⚙️</span> META</div>
+    <div class="nav-item" data-sec="hero"><span class="ni">👤</span> HERO</div>
+    <div class="nav-item" data-sec="stats"><span class="ni">📊</span> STATS</div>
+    <div class="nav-item" data-sec="contact"><span class="ni">📡</span> CONTACT</div>
+    <div class="nav-sec">CONTENT</div>
+    <div class="nav-item" data-sec="projects"><span class="ni">⚙️</span> PROJECTS</div>
+    <div class="nav-item" data-sec="experience"><span class="ni">📋</span> EXPERIENCE</div>
+    <div class="nav-item" data-sec="skills"><span class="ni">📈</span> SKILLS</div>
+    <div class="nav-item" data-sec="buildlog"><span class="ni">📝</span> BUILD LOG</div>
+    <div class="nav-item" data-sec="about"><span class="ni">ℹ️</span> ABOUT</div>
+    <div class="nav-sec">ADVANCED</div>
+    <div class="nav-item" data-sec="json"><span class="ni">{ }</span> RAW JSON</div>
+    <div class="nav-item" data-sec="guide"><span class="ni">📖</span> GUIDE</div>
+  </div>
+
+  <div id="main">
+
+    <!-- ── META ───────────────────────────────────────────────── -->
+    <div class="section active" id="sec-meta">
+      <div class="sec-header">
+        <div class="sec-title"><span>⚙️</span> SITE META</div>
+        <div class="sec-sub">// GLOBAL SETTINGS</div>
+      </div>
+      <div class="preview-bar">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);">PREVIEW →</span>
+        <a href="index.html" target="_blank">index.html</a>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-left:auto;">After exporting, commit content.json to GitHub to update live site</span>
+      </div>
+      <div class="card">
+        <div class="field-row col2">
+          <div class="field"><label>SITE TITLE</label><input type="text" id="meta_siteTitle" placeholder="MECHA.DEV"><div class="hint">Shown in browser tab & topbar</div></div>
+          <div class="field"><label>OS VERSION</label><input type="text" id="meta_osVersion" placeholder="v3.0.0"></div>
+        </div>
+        <div class="field"><label>TAGLINE</label><input type="text" id="meta_tagline" placeholder="Embedded Systems & Mechatronics Engineering"><div class="hint">Shown under title during boot</div></div>
+        <div class="field">
+          <label>BOOT MESSAGES</label>
+          <div class="hint" style="margin-bottom:8px;">One line per boot message (in order)</div>
+          <div id="bootLinesList"></div>
+          <button class="add-item-btn" onclick="addBootLine()">+ ADD LINE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HERO ───────────────────────────────────────────────── -->
+    <div class="section" id="sec-hero">
+      <div class="sec-header">
+        <div class="sec-title"><span>👤</span> HERO SECTION</div>
+        <div class="sec-sub">// HOME PAGE INTRO</div>
+      </div>
+      <div class="card">
+        <div class="field-row col2">
+          <div class="field"><label>YOUR NAME</label><input type="text" id="hero_name" placeholder="YOUR.NAME"><div class="hint">Use dot (.) to split with green color, e.g. FIRST.LAST</div></div>
+          <div class="field"><label>LOCATION</label><input type="text" id="hero_location" placeholder="Amman, JO"></div>
+        </div>
+        <div class="field"><label>ROLE / TITLE</label><input type="text" id="hero_role" placeholder="EMBEDDED SYSTEMS & MECHATRONICS ENGINEER"></div>
+        <div class="field"><label>BIO</label><textarea id="hero_bio" rows="3" placeholder="Short intro paragraph..."></textarea></div>
+        <div class="divider"></div>
+        <label>SKILL CHIPS</label>
+        <div class="hint" style="margin-bottom:10px;">Quick tags shown below your name on the home page</div>
+        <div id="heroChipsList"></div>
+        <button class="add-item-btn" onclick="addHeroChip()">+ ADD CHIP</button>
+      </div>
+    </div>
+
+    <!-- ── STATS ──────────────────────────────────────────────── -->
+    <div class="section" id="sec-stats">
+      <div class="sec-header">
+        <div class="sec-title"><span>📊</span> STATS</div>
+        <div class="sec-sub">// 3 COUNTER BOXES ON HOME</div>
+      </div>
+      <div id="statsList"></div>
+      <button class="add-item-btn" onclick="addStat()">+ ADD STAT</button>
+    </div>
+
+    <!-- ── CONTACT ────────────────────────────────────────────── -->
+    <div class="section" id="sec-contact">
+      <div class="sec-header">
+        <div class="sec-title"><span>📡</span> CONTACT</div>
+        <div class="sec-sub">// CONTACT PAGE SETTINGS</div>
+      </div>
+      <div class="card">
+        <div class="field"><label>AVAILABILITY STATUS TEXT</label><input type="text" id="contact_status" placeholder="Currently available for freelance projects..."></div>
+        <div class="divider"></div>
+        <label>CONTACT CHANNELS</label>
+        <div class="hint" style="margin-bottom:10px;">Links shown as cards on the contact page</div>
+        <div id="contactChannelsList"></div>
+        <button class="add-item-btn" onclick="addContactChannel()">+ ADD CHANNEL</button>
+      </div>
+    </div>
+
+    <!-- ── PROJECTS ───────────────────────────────────────────── -->
+    <div class="section" id="sec-projects">
+      <div class="sec-header">
+        <div class="sec-title"><span>⚙️</span> PROJECTS</div>
+        <div class="sec-sub">// PORTFOLIO PROJECTS</div>
+      </div>
+      <div id="projectsList"></div>
+      <button class="add-item-btn" onclick="addProject()">+ ADD PROJECT</button>
+    </div>
+
+    <!-- ── EXPERIENCE ─────────────────────────────────────────── -->
+    <div class="section" id="sec-experience">
+      <div class="sec-header">
+        <div class="sec-title"><span>📋</span> EXPERIENCE</div>
+        <div class="sec-sub">// WORK, EDUCATION & ACHIEVEMENTS</div>
+      </div>
+      <div class="sec-title" style="font-size:13px;margin-bottom:14px;color:var(--text2);">WORK HISTORY</div>
+      <div id="workList"></div>
+      <button class="add-item-btn" onclick="addWorkItem()">+ ADD WORK ENTRY</button>
+      <div class="divider"></div>
+      <div class="sec-title" style="font-size:13px;margin-bottom:14px;color:var(--text2);">EDUCATION</div>
+      <div id="eduList"></div>
+      <button class="add-item-btn" onclick="addEduItem()">+ ADD EDUCATION ENTRY</button>
+      <div class="divider"></div>
+      <div class="sec-title" style="font-size:13px;margin-bottom:14px;color:var(--text2);">ACHIEVEMENTS</div>
+      <div id="achieveList"></div>
+      <button class="add-item-btn" onclick="addAchievement()">+ ADD ACHIEVEMENT</button>
+    </div>
+
+    <!-- ── SKILLS ─────────────────────────────────────────────── -->
+    <div class="section" id="sec-skills">
+      <div class="sec-header">
+        <div class="sec-title"><span>📈</span> SKILLS</div>
+        <div class="sec-sub">// SKILL BARS & TOOLS</div>
+      </div>
+      <div id="skillCatsList"></div>
+      <button class="add-item-btn" onclick="addSkillCat()">+ ADD SKILL CATEGORY</button>
+      <div class="divider"></div>
+      <div class="sec-title" style="font-size:13px;margin-bottom:14px;color:var(--text2);">TOOLS</div>
+      <div id="toolsList"></div>
+      <button class="add-item-btn" onclick="addTool()">+ ADD TOOL</button>
+    </div>
+
+    <!-- ── BUILD LOG ──────────────────────────────────────────── -->
+    <div class="section" id="sec-buildlog">
+      <div class="sec-header">
+        <div class="sec-title"><span>📝</span> BUILD LOG</div>
+        <div class="sec-sub">// FIELD NOTES / BLOG POSTS</div>
+      </div>
+      <div id="buildlogList"></div>
+      <button class="add-item-btn" onclick="addBuildlogEntry()">+ ADD ENTRY</button>
+    </div>
+
+    <!-- ── ABOUT ──────────────────────────────────────────────── -->
+    <div class="section" id="sec-about">
+      <div class="sec-header">
+        <div class="sec-title"><span>ℹ️</span> ABOUT</div>
+        <div class="sec-sub">// ABOUT PAGE CONTENT</div>
+      </div>
+      <div class="card">
+        <label>BIO PARAGRAPHS</label>
+        <div class="hint" style="margin-bottom:10px;">Each entry = one paragraph. Supports &lt;b&gt;, &lt;em&gt; HTML tags.</div>
+        <div id="bioParagraphs"></div>
+        <button class="add-item-btn" onclick="addBioParagraph()">+ ADD PARAGRAPH</button>
+        <div class="divider"></div>
+        <label>QUICK FACTS</label>
+        <div id="quickFactsList"></div>
+        <button class="add-item-btn" onclick="addQuickFact()">+ ADD FACT</button>
+        <div class="divider"></div>
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="about_openToWork"><span class="slider"></span></label>
+          <span class="toggle-label">OPEN TO WORK / OPPORTUNITIES</span>
+        </div>
+        <div class="field"><label>CURRENT STATUS TEXT</label><textarea id="about_status" rows="2"></textarea></div>
+        <div class="divider"></div>
+        <label>LANGUAGES</label>
+        <div id="languagesList"></div>
+        <button class="add-item-btn" onclick="addLanguage()">+ ADD LANGUAGE</button>
+        <div class="divider"></div>
+        <label>INTERESTS / CHIPS</label>
+        <div id="interestsList"></div>
+        <button class="add-item-btn" onclick="addInterest()">+ ADD INTEREST</button>
+        <div class="divider"></div>
+        <label>LAB SETUP</label>
+        <div id="labSetupList"></div>
+        <button class="add-item-btn" onclick="addLabItem()">+ ADD LAB ITEM</button>
+      </div>
+    </div>
+
+    <!-- ── JSON EDITOR ────────────────────────────────────────── -->
+    <div class="section" id="sec-json">
+      <div class="sec-header">
+        <div class="sec-title"><span>{ }</span> RAW JSON</div>
+        <div class="sec-sub">// DIRECT JSON EDITING — ADVANCED</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <button class="btn amber" onclick="refreshJSON()">↺ REFRESH FROM FORM</button>
+        <button class="btn primary" onclick="applyJSON()">✓ APPLY JSON TO FORM</button>
+      </div>
+      <textarea id="jsonEditor" spellcheck="false"></textarea>
+    </div>
+
+    <!-- ── GUIDE ──────────────────────────────────────────────── -->
+    <div class="section" id="sec-guide">
+      <div class="sec-header">
+        <div class="sec-title"><span>📖</span> SETUP GUIDE</div>
+        <div class="sec-sub">// HOW TO DEPLOY ON GITHUB PAGES</div>
+      </div>
+      <div class="card">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text2);line-height:2.2;">
+          <div style="color:var(--green);font-size:13px;margin-bottom:8px;">▸ INITIAL SETUP</div>
+          <div>1. Create a GitHub repo named <span style="color:var(--amber);">yourusername.github.io</span></div>
+          <div>2. Upload all 3 files: <span style="color:var(--cyan);">index.html</span>, <span style="color:var(--cyan);">admin.html</span>, <span style="color:var(--cyan);">content.json</span></div>
+          <div>3. In repo Settings → Pages → Source: <span style="color:var(--amber);">Deploy from branch: main / root</span></div>
+          <div>4. Your site goes live at <span style="color:var(--cyan);">https://yourusername.github.io</span></div>
+          <div class="divider"></div>
+          <div style="color:var(--green);font-size:13px;margin-bottom:8px;">▸ UPDATING CONTENT</div>
+          <div>1. Open <span style="color:var(--cyan);">admin.html</span> locally (or at yourusername.github.io/admin.html)</div>
+          <div>2. Edit whatever you want in the form panels</div>
+          <div>3. Click <span style="color:var(--amber);">💾 EXPORT JSON</span> to download the updated content.json</div>
+          <div>4. Commit & push the new content.json to GitHub</div>
+          <div>5. GitHub Pages auto-deploys in ~30 seconds ✓</div>
+          <div class="divider"></div>
+          <div style="color:var(--green);font-size:13px;margin-bottom:8px;">▸ COLOR CODES</div>
+          <div><span style="color:var(--green);">""  (empty)</span> = Green accent</div>
+          <div><span style="color:var(--amber);">"a"</span> = Amber / orange accent</div>
+          <div><span style="color:var(--cyan);">"c"</span> = Cyan / blue accent</div>
+          <div><span style="color:var(--text2);">"d"</span> = Dim / neutral (for chips)</div>
+          <div class="divider"></div>
+          <div style="color:var(--green);font-size:13px;margin-bottom:8px;">▸ TIPS</div>
+          <div>• Use <span style="color:var(--amber);">LOAD JSON</span> to bring in an existing content.json to keep editing it</div>
+          <div>• The <span style="color:var(--cyan);">RAW JSON</span> panel lets you paste/edit JSON directly</div>
+          <div>• Admin panel works 100% offline — no server needed</div>
+          <div>• Contact form needs a service like <span style="color:var(--amber);">Formspree.io</span> (free) for real emails</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileLoad(event)">
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let DATA = {};
+let dirty = false;
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    collectAll();
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('sec-'+item.dataset.sec).classList.add('active');
+    if(item.dataset.sec==='json') refreshJSON();
+  });
+});
+
+// ─── LOAD / EXPORT ────────────────────────────────────────────────────────────
+async function loadDefault() {
+  try {
+    const r = await fetch('content.json?v='+Date.now());
+    DATA = await r.json();
+    toast('✓ Loaded content.json');
+  } catch(e) {
+    DATA = getEmptyData();
+    toast('No content.json found — starting fresh', true);
+  }
+  populateAll();
+}
+
+function loadFromFile() { document.getElementById('fileInput').click(); }
+
+function handleFileLoad(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      DATA = JSON.parse(ev.target.result);
+      populateAll();
+      toast('✓ Loaded ' + file.name);
+    } catch(err) { toast('✗ Invalid JSON file', true); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function exportJSON() {
+  collectAll();
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'content.json';
+  a.click();
+  setStatus('✓ EXPORTED', false);
+  toast('✓ content.json downloaded — commit to GitHub!');
+}
+
+function copyJSON() {
+  collectAll();
+  navigator.clipboard.writeText(JSON.stringify(DATA, null, 2));
+  toast('✓ JSON copied to clipboard');
+}
+
+function refreshJSON() {
+  collectAll();
+  document.getElementById('jsonEditor').value = JSON.stringify(DATA, null, 2);
+}
+
+function applyJSON() {
+  try {
+    DATA = JSON.parse(document.getElementById('jsonEditor').value);
+    populateAll();
+    toast('✓ JSON applied to form');
+  } catch(e) { toast('✗ Invalid JSON — check syntax', true); }
+}
+
+function setStatus(msg, isErr=false) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = msg; el.className = isErr ? 'err' : 'ok';
+}
+
+function toast(msg, err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show' + (err?' err':'');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.className='',3000);
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function val(id) { const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function setVal(id, v) { const el=document.getElementById(id); if(el) el.value = v||''; }
+function setChk(id, v) { const el=document.getElementById(id); if(el) el.checked = !!v; }
+
+function colorSelect(containerId, currentVal, onchange) {
+  const opts = [
+    {v:'', label:'GRN'},
+    {v:'a', label:'AMB'},
+    {v:'c', label:'CYN'},
+    {v:'d', label:'DIM'}
+  ];
+  const div = document.createElement('div');
+  div.className = 'color-select';
+  opts.forEach(o => {
+    const el = document.createElement('div');
+    el.className = 'color-opt' + (o.v===currentVal?' selected':'');
+    el.dataset.val = o.v;
+    el.textContent = o.label;
+    el.title = o.label;
+    el.addEventListener('click', () => {
+      div.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      if(onchange) onchange(o.v);
+    });
+    div.appendChild(el);
+  });
+  return div;
+}
+
+function arrayTextInputs(container, items, placeholder) {
+  container.innerHTML = '';
+  (items||[]).forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'array-item';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.placeholder = placeholder||''; inp.value = item||'';
+    const del = document.createElement('button');
+    del.className = 'icon-btn'; del.textContent = '✕';
+    del.onclick = () => { row.remove(); markDirty(); };
+    inp.oninput = markDirty;
+    row.append(inp, del);
+    container.appendChild(row);
+  });
+}
+
+function getArrayTextInputs(container) {
+  return [...container.querySelectorAll('.array-item input')].map(i=>i.value.trim()).filter(Boolean);
+}
+
+function markDirty() {
+  dirty = true;
+  setStatus('— unsaved changes', false);
+}
+
+function makeDeleteBtn(fn) {
+  const b = document.createElement('button');
+  b.className = 'icon-btn'; b.textContent = '✕'; b.title = 'Delete';
+  b.onclick = fn; return b;
+}
+function makeExpandBtn(card, inner) {
+  const b = document.createElement('button');
+  b.className = 'expand-btn'; b.textContent = 'EDIT';
+  b.onclick = () => {
+    const open = inner.classList.toggle('open');
+    card.classList.toggle('expanded', open);
+    b.textContent = open ? 'CLOSE' : 'EDIT';
+    b.classList.toggle('open', open);
+  };
+  return b;
+}
+
+// ─── POPULATE ALL ─────────────────────────────────────────────────────────────
+function populateAll() {
+  populateMeta();
+  populateHero();
+  populateStats();
+  populateContact();
+  populateProjects();
+  populateExperience();
+  populateSkills();
+  populateBuildlog();
+  populateAbout();
+  dirty = false;
+  setStatus('✓ LOADED', false);
+}
+
+// ─── COLLECT ALL ──────────────────────────────────────────────────────────────
+function collectAll() {
+  collectMeta();
+  collectHero();
+  collectStats();
+  collectContact();
+  collectProjects();
+  collectExperience();
+  collectSkills();
+  collectBuildlog();
+  collectAbout();
+}
+
+// ─── META ─────────────────────────────────────────────────────────────────────
+function populateMeta() {
+  const m = DATA.meta || {};
+  setVal('meta_siteTitle', m.siteTitle);
+  setVal('meta_osVersion', m.osVersion);
+  setVal('meta_tagline', m.tagline);
+  const c = document.getElementById('bootLinesList');
+  arrayTextInputs(c, m.bootLines||[], 'Boot message line...');
+}
+function addBootLine() {
+  const c = document.getElementById('bootLinesList');
+  const items = getArrayTextInputs(c);
+  arrayTextInputs(c, [...items, ''], 'Boot message line...');
+  markDirty();
+}
+function collectMeta() {
+  DATA.meta = {
+    siteTitle: val('meta_siteTitle') || 'MECHA.DEV',
+    osVersion: val('meta_osVersion') || 'v3.0.0',
+    tagline: val('meta_tagline'),
+    bootLines: getArrayTextInputs(document.getElementById('bootLinesList'))
+  };
+}
+
+// ─── HERO ─────────────────────────────────────────────────────────────────────
+function populateHero() {
+  const h = DATA.hero || {};
+  setVal('hero_name', h.name);
+  setVal('hero_role', h.role);
+  setVal('hero_location', h.location);
+  setVal('hero_bio', h.bio);
+  renderHeroChips(h.chips||[]);
+}
+function renderHeroChips(chips) {
+  const c = document.getElementById('heroChipsList');
+  c.innerHTML = '';
+  chips.forEach((chip, i) => {
+    const row = document.createElement('div');
+    row.className = 'array-item';
+    row.style.flexWrap = 'wrap';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.value = chip.label||''; inp.placeholder = 'Chip label';
+    inp.style.minWidth='120px'; inp.oninput = markDirty;
+    const colorDiv = colorSelect(null, chip.color||'', ()=>markDirty());
+    colorDiv.style.flexShrink = '0';
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.append(inp, colorDiv, del);
+    c.appendChild(row);
+  });
+}
+function addHeroChip() {
+  collectHero();
+  DATA.hero.chips.push({label:'',color:''});
+  renderHeroChips(DATA.hero.chips);
+  markDirty();
+}
+function collectHero() {
+  const chips = [...document.getElementById('heroChipsList').querySelectorAll('.array-item')].map(row => ({
+    label: row.querySelector('input').value.trim(),
+    color: row.querySelector('.color-opt.selected')?.dataset.val || ''
+  })).filter(c=>c.label);
+  DATA.hero = {
+    name: val('hero_name'),
+    role: val('hero_role'),
+    location: val('hero_location'),
+    bio: val('hero_bio'),
+    chips
+  };
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function populateStats() { renderStatsList(DATA.stats||[]); }
+function renderStatsList(stats) {
+  const c = document.getElementById('statsList'); c.innerHTML = '';
+  stats.forEach((s, i) => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    card.innerHTML = `
+      <div class="list-item-header">
+        <div class="list-item-title">${s.value} — ${s.label}</div>
+        <div class="item-actions"></div>
+      </div>
+      <div class="collapsible open form-inside">
+        <div class="field-row col2">
+          <div class="field"><label>VALUE</label><input type="text" class="st-val" value="${s.value||''}"></div>
+          <div class="field"><label>LABEL</label><input type="text" class="st-label" value="${s.label||''}"></div>
+        </div>
+        <div class="field"><label>COLOR</label></div>
+      </div>`;
+    const colorDiv = colorSelect(null, s.color||'', ()=>markDirty());
+    card.querySelector('.collapsible .field:last-child').appendChild(colorDiv);
+    card.querySelector('.item-actions').appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    card.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function addStat() {
+  collectStats();
+  DATA.stats.push({value:'0',label:'LABEL',color:''});
+  renderStatsList(DATA.stats); markDirty();
+}
+function collectStats() {
+  DATA.stats = [...document.getElementById('statsList').querySelectorAll('.list-item')].map(card => ({
+    value: card.querySelector('.st-val').value.trim(),
+    label: card.querySelector('.st-label').value.trim(),
+    color: card.querySelector('.color-opt.selected')?.dataset.val || ''
+  }));
+}
+
+// ─── CONTACT ──────────────────────────────────────────────────────────────────
+function populateContact() {
+  const ct = DATA.contact || {};
+  setVal('contact_status', ct.availableStatus);
+  renderContactChannels(ct.channels||[]);
+}
+function renderContactChannels(channels) {
+  const c = document.getElementById('contactChannelsList'); c.innerHTML = '';
+  channels.forEach((ch, i) => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    card.innerHTML = `
+      <div class="list-item-header">
+        <div class="list-item-title">${ch.icon||''} ${ch.label||''}</div>
+        <div class="item-actions"></div>
+      </div>
+      <div class="collapsible open form-inside">
+        <div class="field-row col3">
+          <div class="field"><label>ICON (emoji)</label><input type="text" class="ch-icon" value="${ch.icon||''}"></div>
+          <div class="field"><label>LABEL</label><input type="text" class="ch-label" value="${ch.label||''}"></div>
+          <div class="field"><label>VALUE / URL</label><input type="text" class="ch-value" value="${ch.value||''}"></div>
+        </div>
+        <div class="field"><label>COLOR</label></div>
+      </div>`;
+    const colorDiv = colorSelect(null, ch.color||'', ()=>markDirty());
+    card.querySelector('.collapsible .field:last-child').appendChild(colorDiv);
+    card.querySelector('.item-actions').appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    card.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function addContactChannel() {
+  collectContact();
+  DATA.contact.channels.push({icon:'📧',label:'EMAIL',value:'',color:''});
+  renderContactChannels(DATA.contact.channels); markDirty();
+}
+function collectContact() {
+  const channels = [...document.getElementById('contactChannelsList').querySelectorAll('.list-item')].map(card=>({
+    icon: card.querySelector('.ch-icon').value.trim(),
+    label: card.querySelector('.ch-label').value.trim(),
+    value: card.querySelector('.ch-value').value.trim(),
+    color: card.querySelector('.color-opt.selected')?.dataset.val||''
+  }));
+  DATA.contact = { availableStatus: val('contact_status'), channels };
+}
+
+// ─── PROJECTS ─────────────────────────────────────────────────────────────────
+function populateProjects() { renderProjectsList(DATA.projects||[]); }
+function renderProjectsList(projs) {
+  const c = document.getElementById('projectsList'); c.innerHTML = '';
+  projs.forEach((p, i) => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    const inner = document.createElement('div'); inner.className = 'collapsible';
+    inner.innerHTML = `
+      <div class="form-inside">
+        <div class="field-row col3">
+          <div class="field"><label>ICON (emoji)</label><input type="text" class="p-icon" value="${p.icon||''}"></div>
+          <div class="field"><label>NAME</label><input type="text" class="p-name" value="${p.name||''}"></div>
+          <div class="field"><label>STATUS TEXT</label><input type="text" class="p-status" value="${p.status||''}"></div>
+        </div>
+        <div class="field"><label>SHORT DESCRIPTION</label><input type="text" class="p-desc" value="${p.desc||''}"></div>
+        <div class="field"><label>FULL DETAIL</label><textarea class="p-detail" rows="2">${p.detail||''}</textarea></div>
+        <div class="field-row col2">
+          <div class="field"><label>CATEGORIES (comma-separated)</label><input type="text" class="p-cat" value="${(p.cat||[]).join(', ')}"><div class="hint">e.g. robotics, firmware, pcb</div></div>
+          <div class="field"><label>TAGS (comma-separated)</label><input type="text" class="p-tags" value="${(p.tags||[]).join(', ')}"></div>
+        </div>
+        <div class="field"><label>CARD COLOR ACCENT</label></div>
+        <div class="divider" style="margin:10px 0;"></div>
+        <label>KEY BULLETS</label>
+        <div class="p-bullets"></div>
+        <button class="add-item-btn p-addbullet">+ ADD BULLET</button>
+        <div class="divider" style="margin:10px 0;"></div>
+        <label>SPECS (pairs)</label>
+        <div class="p-specs"></div>
+        <button class="add-item-btn p-addspec">+ ADD SPEC</button>
+      </div>`;
+    const colorDiv = colorSelect(null, p.col||'', ()=>markDirty());
+    inner.querySelector('.field:has(.p-cat)').before(inner.querySelector('.field:last-child'));
+    inner.querySelector('.collapsible .field:nth-last-child(1)') || inner.querySelector('.form-inside > .field:nth-child(4)') || (() => {})();
+    // insert color picker after "CARD COLOR ACCENT" label
+    inner.querySelector('.field:last-of-type');
+    const colorField = [...inner.querySelectorAll('.field')].find(f=>f.querySelector('label')?.textContent==='CARD COLOR ACCENT');
+    if(colorField) colorField.appendChild(colorDiv);
+
+    arrayTextInputs(inner.querySelector('.p-bullets'), p.bullets||[], 'Bullet point...');
+    inner.querySelector('.p-addbullet').onclick = () => { addArrayItem(inner.querySelector('.p-bullets'),''); markDirty(); };
+
+    const specsDiv = inner.querySelector('.p-specs');
+    (p.specs||[]).forEach(sp => addSpecRow(specsDiv, sp.k, sp.v));
+    inner.querySelector('.p-addspec').onclick = () => { addSpecRow(specsDiv,'',''); markDirty(); };
+
+    const header = document.createElement('div'); header.className = 'list-item-header';
+    header.innerHTML = `<div class="list-item-title">${p.icon||''} ${p.name||'Untitled'}</div>`;
+    const actions = document.createElement('div'); actions.className = 'item-actions';
+    actions.appendChild(makeExpandBtn(card, inner));
+    actions.appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    header.appendChild(actions);
+    card.appendChild(header);
+    card.appendChild(inner);
+    inner.querySelectorAll('input,textarea').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function addSpecRow(container, k, v) {
+  const row = document.createElement('div'); row.className = 'array-item';
+  row.innerHTML = `<input type="text" placeholder="Key" value="${k||''}" style="flex:0.5"><input type="text" placeholder="Value" value="${v||''}">`;
+  const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+  row.appendChild(del);
+  container.appendChild(row);
+}
+function addArrayItem(container, val) {
+  const items = getArrayTextInputs(container);
+  arrayTextInputs(container, [...items, val], container.previousElementSibling?.textContent||'');
+}
+function addProject() {
+  collectProjects();
+  DATA.projects.push({id:'p'+(Date.now()),icon:'⚙️',name:'NEW PROJECT',col:'',desc:'',detail:'',tags:[],tc:[],status:'IN PROGRESS',statusColor:'var(--amber)',cat:[],specs:[],bullets:[]});
+  renderProjectsList(DATA.projects); markDirty();
+}
+function collectProjects() {
+  DATA.projects = [...document.getElementById('projectsList').querySelectorAll('.list-item')].map((card,i) => {
+    const tags = (card.querySelector('.p-tags')?.value||'').split(',').map(t=>t.trim()).filter(Boolean);
+    const bullets = getArrayTextInputs(card.querySelector('.p-bullets'));
+    const specs = [...(card.querySelector('.p-specs')?.querySelectorAll('.array-item')||[])].map(row=>{
+      const ins = row.querySelectorAll('input'); return {k:ins[0]?.value.trim()||'',v:ins[1]?.value.trim()||''};
+    }).filter(s=>s.k);
+    return {
+      id: DATA.projects[i]?.id || 'p'+i,
+      icon: card.querySelector('.p-icon')?.value.trim()||'',
+      name: card.querySelector('.p-name')?.value.trim()||'',
+      col: card.querySelector('.color-opt.selected')?.dataset.val||'',
+      desc: card.querySelector('.p-desc')?.value.trim()||'',
+      detail: card.querySelector('.p-detail')?.value.trim()||'',
+      tags, tc: tags.map(()=>''),
+      status: card.querySelector('.p-status')?.value.trim()||'',
+      statusColor: 'var(--green)',
+      cat: (card.querySelector('.p-cat')?.value||'').split(',').map(t=>t.trim()).filter(Boolean),
+      specs, bullets
+    };
+  });
+}
+
+// ─── EXPERIENCE ───────────────────────────────────────────────────────────────
+function populateExperience() {
+  const exp = DATA.experience || {};
+  renderTimelineList(document.getElementById('workList'), exp.work||[], 'work');
+  renderTimelineList(document.getElementById('eduList'), exp.education||[], 'edu');
+  renderAchievements(exp.achievements||[]);
+}
+function renderTimelineList(container, items, type) {
+  container.innerHTML = '';
+  items.forEach((item, i) => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    const inner = document.createElement('div'); inner.className = 'collapsible';
+    inner.innerHTML = `
+      <div class="form-inside">
+        <div class="field-row col2">
+          <div class="field"><label>PERIOD</label><input type="text" class="tl-period" value="${item.period||''}"></div>
+          <div class="field"><label>${type==='work'?'COMPANY':'INSTITUTION'}</label><input type="text" class="tl-org" value="${(item.company||item.institution)||''}"></div>
+        </div>
+        <div class="field"><label>TITLE</label><input type="text" class="tl-title" value="${item.title||''}"></div>
+        <div class="field"><label>DESCRIPTION</label><textarea class="tl-desc" rows="2">${item.description||''}</textarea></div>
+        <div class="field"><label>BULLETS</label><div class="tl-bullets"></div><button class="add-item-btn tl-addbullet">+ ADD BULLET</button></div>
+        <div class="field"><label>COLOR</label></div>
+      </div>`;
+    arrayTextInputs(inner.querySelector('.tl-bullets'), item.bullets||[], 'Bullet...');
+    inner.querySelector('.tl-addbullet').onclick = ()=>{addArrayItem(inner.querySelector('.tl-bullets'),'');markDirty();};
+    const colorDiv = colorSelect(null, item.color||'', ()=>markDirty());
+    inner.querySelector('.form-inside .field:last-child').appendChild(colorDiv);
+    const header = document.createElement('div'); header.className = 'list-item-header';
+    header.innerHTML = `<div class="list-item-title">${item.title||'Untitled'} @ ${(item.company||item.institution)||''}</div>`;
+    const actions = document.createElement('div'); actions.className = 'item-actions';
+    actions.appendChild(makeExpandBtn(card, inner));
+    actions.appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    header.appendChild(actions);
+    card.appendChild(header); card.appendChild(inner);
+    inner.querySelectorAll('input,textarea').forEach(el=>el.oninput=markDirty);
+    container.appendChild(card);
+  });
+}
+function renderAchievements(items) {
+  const c = document.getElementById('achieveList'); c.innerHTML = '';
+  items.forEach(item => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    card.innerHTML = `
+      <div class="list-item-header">
+        <div class="list-item-title">${item.icon||''} ${item.title||''}</div>
+        <div class="item-actions"></div>
+      </div>
+      <div class="collapsible open form-inside">
+        <div class="field-row col3">
+          <div class="field"><label>ICON</label><input type="text" class="ac-icon" value="${item.icon||''}"></div>
+          <div class="field"><label>TITLE</label><input type="text" class="ac-title" value="${item.title||''}"></div>
+          <div class="field"><label>SUBTITLE</label><input type="text" class="ac-sub" value="${item.subtitle||''}"></div>
+        </div>
+        <div class="field"><label>COLOR</label></div>
+      </div>`;
+    const colorDiv = colorSelect(null, item.color||'', ()=>markDirty());
+    card.querySelector('.collapsible .field:last-child').appendChild(colorDiv);
+    card.querySelector('.item-actions').appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    card.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function addWorkItem() { collectExperience(); DATA.experience.work.push({period:'',title:'',company:'',color:'',description:'',bullets:[],chips:[]}); renderTimelineList(document.getElementById('workList'),DATA.experience.work,'work'); markDirty(); }
+function addEduItem() { collectExperience(); DATA.experience.education.push({period:'',title:'',institution:'',color:'',description:'',bullets:[]}); renderTimelineList(document.getElementById('eduList'),DATA.experience.education,'edu'); markDirty(); }
+function addAchievement() { collectExperience(); DATA.experience.achievements.push({icon:'🏆',title:'',subtitle:'',color:''}); renderAchievements(DATA.experience.achievements); markDirty(); }
+function collectTimeline(container, type) {
+  return [...container.querySelectorAll('.list-item')].map(card => {
+    const obj = {
+      period: card.querySelector('.tl-period')?.value.trim()||'',
+      title: card.querySelector('.tl-title')?.value.trim()||'',
+      description: card.querySelector('.tl-desc')?.value.trim()||'',
+      bullets: getArrayTextInputs(card.querySelector('.tl-bullets')),
+      color: card.querySelector('.color-opt.selected')?.dataset.val||''
+    };
+    if(type==='work') obj.company = card.querySelector('.tl-org')?.value.trim()||'';
+    else obj.institution = card.querySelector('.tl-org')?.value.trim()||'';
+    return obj;
+  });
+}
+function collectExperience() {
+  DATA.experience = {
+    work: collectTimeline(document.getElementById('workList'),'work'),
+    education: collectTimeline(document.getElementById('eduList'),'edu'),
+    achievements: [...document.getElementById('achieveList').querySelectorAll('.list-item')].map(card=>({
+      icon: card.querySelector('.ac-icon')?.value.trim()||'',
+      title: card.querySelector('.ac-title')?.value.trim()||'',
+      subtitle: card.querySelector('.ac-sub')?.value.trim()||'',
+      color: card.querySelector('.color-opt.selected')?.dataset.val||''
+    }))
+  };
+}
+
+// ─── SKILLS ───────────────────────────────────────────────────────────────────
+function populateSkills() {
+  const sk = DATA.skills || {};
+  renderSkillCats(sk.categories||[]);
+  renderToolsList(sk.tools||[]);
+}
+function renderSkillCats(cats) {
+  const c = document.getElementById('skillCatsList'); c.innerHTML = '';
+  cats.forEach(cat => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    const inner = document.createElement('div'); inner.className = 'collapsible';
+    inner.innerHTML = `
+      <div class="form-inside">
+        <div class="field-row col2">
+          <div class="field"><label>CATEGORY TITLE</label><input type="text" class="sk-title" value="${cat.title||''}"></div>
+          <div class="field"><label>ACCENT COLOR</label></div>
+        </div>
+        <div class="divider" style="margin:10px 0;"></div>
+        <label>SKILL ITEMS</label>
+        <div class="sk-items"></div>
+        <button class="add-item-btn sk-additem">+ ADD SKILL</button>
+      </div>`;
+    const colorDiv = colorSelect(null, cat.color||'', ()=>markDirty());
+    inner.querySelector('.field:last-child').appendChild(colorDiv);
+    renderSkillItems(inner.querySelector('.sk-items'), cat.items||[]);
+    inner.querySelector('.sk-additem').onclick = ()=>{addSkillItem(inner.querySelector('.sk-items'));markDirty();};
+    const header = document.createElement('div'); header.className = 'list-item-header';
+    header.innerHTML = `<div class="list-item-title">${cat.title||'Untitled'}</div>`;
+    const actions = document.createElement('div'); actions.className = 'item-actions';
+    actions.appendChild(makeExpandBtn(card, inner));
+    actions.appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    header.appendChild(actions);
+    card.appendChild(header); card.appendChild(inner);
+    inner.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function renderSkillItems(container, items) {
+  container.innerHTML = '';
+  items.forEach(item => {
+    const row = document.createElement('div'); row.className = 'array-item'; row.style.flexWrap='wrap';
+    const inp = document.createElement('input'); inp.type='text'; inp.value=item.name||''; inp.placeholder='Skill name'; inp.style.flex='2'; inp.oninput=markDirty;
+    const pct = document.createElement('input'); pct.type='number'; pct.value=item.pct||0; pct.min=0; pct.max=100; pct.style.width='70px'; pct.style.flex='0'; pct.placeholder='%'; pct.oninput=markDirty;
+    const colorDiv = colorSelect(null, item.color==='g'?'':item.color||'', ()=>markDirty());
+    colorDiv.style.flexShrink='0';
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.append(inp, pct, colorDiv, del);
+    container.appendChild(row);
+  });
+}
+function addSkillItem(container) {
+  const items = [...container.querySelectorAll('.array-item')].map(row=>{
+    const ins=row.querySelectorAll('input');
+    return {name:ins[0].value,pct:parseInt(ins[1].value)||0,color:row.querySelector('.color-opt.selected')?.dataset.val||''};
+  });
+  renderSkillItems(container, [...items, {name:'',pct:80,color:''}]);
+}
+function addSkillCat() { collectSkills(); DATA.skills.categories.push({title:'NEW CATEGORY',color:'',items:[]}); renderSkillCats(DATA.skills.categories); markDirty(); }
+function renderToolsList(tools) {
+  const c = document.getElementById('toolsList'); c.innerHTML = '';
+  tools.forEach(t => {
+    const row = document.createElement('div'); row.className = 'array-item';
+    const icon = document.createElement('input'); icon.type='text'; icon.value=t.icon||''; icon.placeholder='Icon emoji'; icon.style.flex='0'; icon.style.width='60px'; icon.oninput=markDirty;
+    const name = document.createElement('input'); name.type='text'; name.value=t.name||''; name.placeholder='Tool name'; name.oninput=markDirty;
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.append(icon, name, del);
+    c.appendChild(row);
+  });
+}
+function addTool() {
+  const c = document.getElementById('toolsList');
+  const row = document.createElement('div'); row.className = 'array-item';
+  const icon = document.createElement('input'); icon.type='text'; icon.placeholder='🔧'; icon.style.flex='0'; icon.style.width='60px'; icon.oninput=markDirty;
+  const name = document.createElement('input'); name.type='text'; name.placeholder='Tool name'; name.oninput=markDirty;
+  const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+  row.append(icon, name, del);
+  c.appendChild(row);
+  markDirty();
+}
+function collectSkills() {
+  const cats = [...document.getElementById('skillCatsList').querySelectorAll('.list-item')].map(card => ({
+    title: card.querySelector('.sk-title')?.value.trim()||'',
+    color: card.querySelector('.color-opt.selected')?.dataset.val||'',
+    items: [...(card.querySelector('.sk-items')?.querySelectorAll('.array-item')||[])].map(row => {
+      const ins = row.querySelectorAll('input');
+      const c = row.querySelector('.color-opt.selected')?.dataset.val||'';
+      return {name:ins[0]?.value.trim()||'',pct:parseInt(ins[1]?.value)||0,color:c===''?'g':c};
+    })
+  }));
+  const tools = [...document.getElementById('toolsList').querySelectorAll('.array-item')].map(row => {
+    const ins = row.querySelectorAll('input');
+    return {icon:ins[0]?.value.trim()||'',name:ins[1]?.value.trim()||''};
+  }).filter(t=>t.name);
+  DATA.skills = {categories: cats, tools};
+}
+
+// ─── BUILD LOG ────────────────────────────────────────────────────────────────
+function populateBuildlog() { renderBuildlogList(DATA.buildlog||[]); }
+function renderBuildlogList(entries) {
+  const c = document.getElementById('buildlogList'); c.innerHTML = '';
+  entries.forEach(e => {
+    const card = document.createElement('div'); card.className = 'list-item';
+    const inner = document.createElement('div'); inner.className = 'collapsible';
+    inner.innerHTML = `
+      <div class="form-inside">
+        <div class="field-row col2">
+          <div class="field"><label>DAY (number)</label><input type="text" class="bl-day" value="${e.day||''}"></div>
+          <div class="field"><label>MONTH YEAR (e.g. NOV 2024)</label><input type="text" class="bl-my" value="${e.monthYear||''}"></div>
+        </div>
+        <div class="field"><label>TITLE</label><input type="text" class="bl-title" value="${e.title||''}"></div>
+        <div class="field"><label>EXCERPT / TEASER</label><textarea class="bl-excerpt" rows="2">${e.excerpt||''}</textarea></div>
+        <div class="field"><label>CHIPS</label><div class="bl-chips"></div><button class="add-item-btn bl-addchip">+ ADD CHIP</button></div>
+      </div>`;
+    renderChipsEditor(inner.querySelector('.bl-chips'), e.chips||[]);
+    inner.querySelector('.bl-addchip').onclick = ()=>{addChipToEditor(inner.querySelector('.bl-chips'));markDirty();};
+    const header = document.createElement('div'); header.className = 'list-item-header';
+    header.innerHTML = `<div class="list-item-title">${e.day||'?'} ${e.monthYear||''} — ${e.title||''}</div>`;
+    const actions = document.createElement('div'); actions.className = 'item-actions';
+    actions.appendChild(makeExpandBtn(card, inner));
+    actions.appendChild(makeDeleteBtn(()=>{card.remove();markDirty();}));
+    header.appendChild(actions);
+    card.appendChild(header); card.appendChild(inner);
+    inner.querySelectorAll('input,textarea').forEach(el=>el.oninput=markDirty);
+    c.appendChild(card);
+  });
+}
+function renderChipsEditor(container, chips) {
+  container.innerHTML = '';
+  chips.forEach(chip => {
+    const row = document.createElement('div'); row.className = 'array-item'; row.style.flexWrap='wrap';
+    const inp = document.createElement('input'); inp.type='text'; inp.value=chip.label||''; inp.placeholder='Chip label'; inp.oninput=markDirty;
+    const colorDiv = colorSelect(null, chip.color||'', ()=>markDirty());
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.append(inp, colorDiv, del);
+    container.appendChild(row);
+  });
+}
+function addChipToEditor(container) { renderChipsEditor(container, [...collectChipsFromEditor(container),{label:'',color:''}]); markDirty(); }
+function collectChipsFromEditor(container) {
+  return [...(container?.querySelectorAll('.array-item')||[])].map(row=>({
+    label: row.querySelector('input')?.value.trim()||'',
+    color: row.querySelector('.color-opt.selected')?.dataset.val||''
+  })).filter(c=>c.label);
+}
+function addBuildlogEntry() { collectBuildlog(); DATA.buildlog.unshift({day:new Date().getDate().toString().padStart(2,'0'),monthYear:new Date().toLocaleString('en',{month:'short'}).toUpperCase()+' '+new Date().getFullYear(),title:'',excerpt:'',chips:[]}); renderBuildlogList(DATA.buildlog); markDirty(); }
+function collectBuildlog() {
+  DATA.buildlog = [...document.getElementById('buildlogList').querySelectorAll('.list-item')].map(card=>({
+    day: card.querySelector('.bl-day')?.value.trim()||'',
+    monthYear: card.querySelector('.bl-my')?.value.trim()||'',
+    title: card.querySelector('.bl-title')?.value.trim()||'',
+    excerpt: card.querySelector('.bl-excerpt')?.value.trim()||'',
+    chips: collectChipsFromEditor(card.querySelector('.bl-chips'))
+  }));
+}
+
+// ─── ABOUT ────────────────────────────────────────────────────────────────────
+function populateAbout() {
+  const ab = DATA.about || {};
+  arrayTextInputs(document.getElementById('bioParagraphs'), ab.bio||[], 'Bio paragraph...');
+  arrayTextInputs(document.getElementById('quickFactsList'), ab.quickFacts||[], 'Quick fact...');
+  setChk('about_openToWork', ab.openToWork);
+  setVal('about_status', ab.currentStatus);
+  renderLangsEditor(ab.languages||[]);
+  renderChipsEditor(document.getElementById('interestsList'), ab.interests||[]);
+  renderLabSetup(ab.labSetup||[]);
+}
+function renderLangsEditor(langs) {
+  const c = document.getElementById('languagesList'); c.innerHTML = '';
+  langs.forEach(l => {
+    const row = document.createElement('div'); row.className = 'array-item';
+    row.innerHTML = `<input type="text" class="lg-flag" value="${l.flag||''}" style="width:50px;flex:0" placeholder="🇯🇴"><input type="text" class="lg-lang" value="${l.lang||''}" placeholder="Language"><input type="text" class="lg-level" value="${l.level||''}" placeholder="Level">`;
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.appendChild(del);
+    row.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(row);
+  });
+}
+function renderLabSetup(items) {
+  const c = document.getElementById('labSetupList'); c.innerHTML = '';
+  items.forEach(item => {
+    const row = document.createElement('div'); row.className = 'array-item';
+    row.innerHTML = `<input type="text" class="lab-icon" value="${item.icon||''}" style="width:50px;flex:0" placeholder="🔧"><input type="text" class="lab-item" value="${item.item||''}" placeholder="Lab item description">`;
+    const del = makeDeleteBtn(()=>{row.remove();markDirty();});
+    row.appendChild(del);
+    row.querySelectorAll('input').forEach(el=>el.oninput=markDirty);
+    c.appendChild(row);
+  });
+}
+function addBioParagraph() { arrayTextInputs(document.getElementById('bioParagraphs'), [...getArrayTextInputs(document.getElementById('bioParagraphs')),''], 'Bio paragraph...'); markDirty(); }
+function addQuickFact() { arrayTextInputs(document.getElementById('quickFactsList'), [...getArrayTextInputs(document.getElementById('quickFactsList')),''], 'Quick fact...'); markDirty(); }
+function addLanguage() { const langs=collectLangs(); langs.push({flag:'',lang:'',level:''}); renderLangsEditor(langs); markDirty(); }
+function addInterest() { addChipToEditor(document.getElementById('interestsList')); }
+function addLabItem() { const items=collectLabSetup(); items.push({icon:'',item:''}); renderLabSetup(items); markDirty(); }
+function collectLangs() {
+  return [...document.getElementById('languagesList').querySelectorAll('.array-item')].map(row=>({
+    flag: row.querySelector('.lg-flag')?.value.trim()||'',
+    lang: row.querySelector('.lg-lang')?.value.trim()||'',
+    level: row.querySelector('.lg-level')?.value.trim()||''
+  })).filter(l=>l.lang);
+}
+function collectLabSetup() {
+  return [...document.getElementById('labSetupList').querySelectorAll('.array-item')].map(row=>({
+    icon: row.querySelector('.lab-icon')?.value.trim()||'',
+    item: row.querySelector('.lab-item')?.value.trim()||''
+  })).filter(i=>i.item);
+}
+function collectAbout() {
+  DATA.about = {
+    bio: getArrayTextInputs(document.getElementById('bioParagraphs')),
+    quickFacts: getArrayTextInputs(document.getElementById('quickFactsList')),
+    openToWork: document.getElementById('about_openToWork')?.checked,
+    currentStatus: val('about_status'),
+    languages: collectLangs(),
+    interests: collectChipsFromEditor(document.getElementById('interestsList')),
+    labSetup: collectLabSetup()
+  };
+}
+
+function getEmptyData() {
+  return {meta:{siteTitle:'MECHA.DEV',osVersion:'v3.0.0',tagline:'',bootLines:[]},hero:{name:'YOUR.NAME',role:'',bio:'',location:'',chips:[]},stats:[],contact:{availableStatus:'',channels:[]},projects:[],experience:{work:[],education:[],achievements:[]},skills:{categories:[],tools:[]},buildlog:[],about:{bio:[],quickFacts:[],openToWork:true,currentStatus:'',languages:[],interests:[],labSetup:[]}};
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadDefault();
+</script>
+</body>
+</html>
