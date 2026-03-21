@@ -1,7 +1,7 @@
 {
   "meta": {
     "siteTitle": "MECHA.DEV",
-    "osVersion": "v3.0.0",
+    "osVersion": "v1.0.0",
     "tagline": "Embedded Systems & Mechatronics Engineering",
     "bootLines": [
       "Loading kernel modules...",
@@ -15,32 +15,85 @@
     ]
   },
   "hero": {
-    "name": "YOUR.NAME",
+    "name": "AHMAD.SALEH",
     "role": "EMBEDDED SYSTEMS & MECHATRONICS ENGINEER",
-    "bio": "I make hardware talk to software. Designing circuits, writing firmware, and building robots that (usually) do what I want. MCUs, PLCs, sensors, actuators — if it blinks or moves, I'm into it.",
     "location": "Amman, JO",
+    "bio": "I make hardware talk to software. Designing circuits, writing firmware, and building robots that (usually) do what I want.",
     "chips": [
-      {"label": "C/C++", "color": ""},
-      {"label": "STM32", "color": ""},
-      {"label": "ESP32", "color": ""},
-      {"label": "KiCad", "color": "a"},
-      {"label": "PCB Design", "color": "a"},
-      {"label": "ROS2", "color": "c"},
-      {"label": "FreeRTOS", "color": "c"}
+      {
+        "label": "C/C++",
+        "color": ""
+      },
+      {
+        "label": "STM32",
+        "color": ""
+      },
+      {
+        "label": "ESP32",
+        "color": ""
+      },
+      {
+        "label": "KiCad",
+        "color": "a"
+      },
+      {
+        "label": "PCB Design",
+        "color": "a"
+      },
+      {
+        "label": "ROS2",
+        "color": "c"
+      },
+      {
+        "label": "FreeRTOS",
+        "color": "c"
+      }
     ]
   },
   "stats": [
-    {"value": "6", "label": "PROJECTS", "color": ""},
-    {"value": "3+", "label": "YEARS EXP", "color": "a"},
-    {"value": "18", "label": "PCBs DESIGNED", "color": "c"}
+    {
+      "value": "6",
+      "label": "PROJECTS",
+      "color": ""
+    },
+    {
+      "value": "3+",
+      "label": "YEARS EXP",
+      "color": "a"
+    },
+    {
+      "value": "18",
+      "label": "PCBs DESIGNED",
+      "color": "c"
+    }
   ],
   "contact": {
     "availableStatus": "Currently available for freelance projects, full-time roles, and interesting collaborations.",
     "channels": [
-      {"icon": "📧", "label": "EMAIL", "value": "you@example.com", "color": ""},
-      {"icon": "🐙", "label": "GITHUB", "value": "github.com/yourhandle", "color": "a"},
-      {"icon": "💼", "label": "LINKEDIN", "value": "linkedin.com/in/yourname", "color": "c"},
-      {"icon": "🐦", "label": "TWITTER / X", "value": "@yourhandle", "color": ""}
+      {
+        "icon": "📧",
+        "label": "EMAIL",
+        "value": "you@example.com",
+        "color": ""
+      },
+      {
+        "icon": "🐙",
+        "label": "GITHUB",
+        "value": "github.com/yourhandle",
+        "color": "a"
+      },
+      {
+        "icon": "💼",
+        "label": "LINKEDIN",
+        "value": "linkedin.com/in/yourname",
+        "color": "c"
+      },
+      {
+        "icon": "🐦",
+        "label": "TWITTER / X",
+        "value": "@yourhandle",
+        "color": ""
+      }
     ]
   },
   "projects": [
@@ -50,18 +103,43 @@
       "name": "HEXAPOD MK-II",
       "col": "",
       "desc": "18-DOF walking robot with real-time inverse kinematics and terrain adaptation.",
-      "tags": ["STM32", "C++", "IK", "FreeRTOS"],
-      "tc": ["", "", "", ""],
+      "detail": "Built from scratch. Chassis in SolidWorks, PCB in KiCad (4-layer). FreeRTOS with dedicated kinematics task at 500Hz.",
+      "tags": [
+        "STM32",
+        "C++",
+        "IK",
+        "FreeRTOS"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
       "status": "DEPLOYED",
       "statusColor": "var(--green)",
-      "cat": ["robotics", "firmware"],
-      "specs": [
-        {"k": "MCU", "v": "STM32F446 @ 180MHz"},
-        {"k": "DOF", "v": "18 (6 legs × 3)"},
-        {"k": "Comm", "v": "CAN bus @ 1Mbps"},
-        {"k": "Battery", "v": "4S LiPo 60min"}
+      "cat": [
+        "robotics",
+        "firmware"
       ],
-      "detail": "Built from scratch. Chassis in SolidWorks, PCB in KiCad (4-layer). FreeRTOS with dedicated kinematics task at 500Hz.",
+      "specs": [
+        {
+          "k": "MCU",
+          "v": "STM32F446 @ 180MHz"
+        },
+        {
+          "k": "DOF",
+          "v": "18 (6 legs × 3)"
+        },
+        {
+          "k": "Comm",
+          "v": "CAN bus @ 1Mbps"
+        },
+        {
+          "k": "Battery",
+          "v": "4S LiPo 60min"
+        }
+      ],
       "bullets": [
         "Custom IK solver — no FP library",
         "Terrain adapt via IMU + foot sensors",
@@ -75,18 +153,44 @@
       "name": "MPPT SOLAR CTRL",
       "col": "a",
       "desc": "Custom solar charge controller with 94% efficiency and CAN bus telemetry.",
-      "tags": ["ESP32", "Power", "CAN", "KiCad"],
-      "tc": ["", "a", "a", "a"],
+      "detail": "Custom inductor winding. Si8233 gate driver. 4-layer PCB with thermal relief on FETs. Handles 800W peak.",
+      "tags": [
+        "ESP32",
+        "Power",
+        "CAN",
+        "KiCad"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
       "status": "DEPLOYED",
       "statusColor": "var(--green)",
-      "cat": ["firmware", "power", "pcb"],
-      "specs": [
-        {"k": "MCU", "v": "ESP32-S3"},
-        {"k": "Topology", "v": "Sync Buck @ 200kHz"},
-        {"k": "Efficiency", "v": "94.2% peak"},
-        {"k": "Max Input", "v": "40V / 20A"}
+      "cat": [
+        "firmware",
+        "power",
+        "pcb"
       ],
-      "detail": "Custom inductor winding. Si8233 gate driver. 4-layer PCB with thermal relief on FETs. Handles 800W peak.",
+      "specs": [
+        {
+          "k": "MCU",
+          "v": "ESP32-S3"
+        },
+        {
+          "k": "Topology",
+          "v": "Sync Buck @ 200kHz"
+        },
+        {
+          "k": "Efficiency",
+          "v": "94.2% peak"
+        },
+        {
+          "k": "Max Input",
+          "v": "40V / 20A"
+        }
+      ],
       "bullets": [
         "Perturb & Observe MPPT",
         "CAN bus telemetry",
@@ -100,18 +204,44 @@
       "name": "UNDERWATER ROV",
       "col": "c",
       "desc": "Tethered ROV with 4 thrusters, depth sensor, and 1080p live video to 30m.",
-      "tags": ["ROS2", "RPi4", "IMU", "OpenCV"],
-      "tc": ["c", "c", "", ""],
-      "status": "TESTING",
-      "statusColor": "var(--amber)",
-      "cat": ["robotics", "firmware", "iot"],
-      "specs": [
-        {"k": "Brain", "v": "RPi4 + Arduino Nano"},
-        {"k": "Thrusters", "v": "4× T200"},
-        {"k": "Depth", "v": "30m rated (20m tested)"},
-        {"k": "Video", "v": "1080p H.264 <200ms"}
-      ],
       "detail": "50m armored Cat6 tether. Custom ROS2 nodes for thruster mixing, heading hold PID, and depth control.",
+      "tags": [
+        "ROS2",
+        "RPi4",
+        "IMU",
+        "OpenCV"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "TESTING",
+      "statusColor": "var(--green)",
+      "cat": [
+        "robotics",
+        "firmware",
+        "iot"
+      ],
+      "specs": [
+        {
+          "k": "Brain",
+          "v": "RPi4 + Arduino Nano"
+        },
+        {
+          "k": "Thrusters",
+          "v": "4× T200"
+        },
+        {
+          "k": "Depth",
+          "v": "30m rated (20m tested)"
+        },
+        {
+          "k": "Video",
+          "v": "1080p H.264 <200ms"
+        }
+      ],
       "bullets": [
         "Thruster mixing matrix 4-DOF",
         "Depth hold PID ±5cm",
@@ -125,18 +255,43 @@
       "name": "µCURRENT PROBE",
       "col": "",
       "desc": "Ultra-low noise current measurement PCB for power profiling IoT devices.",
-      "tags": ["KiCad", "Analog", "SMD", "INA228"],
-      "tc": ["a", "", "", ""],
-      "status": "OPEN SOURCE",
-      "statusColor": "var(--cyan)",
-      "cat": ["pcb", "firmware"],
-      "specs": [
-        {"k": "Range", "v": "1µA – 1A auto"},
-        {"k": "Noise", "v": "< 50nA RMS"},
-        {"k": "Interface", "v": "BNC + I2C digital"},
-        {"k": "Power", "v": "CR2032 coin cell"}
-      ],
       "detail": "Designed for profiling ESP32 / nRF52 during sleep/wake cycles. 4-layer PCB shielded trace routing. Open-source.",
+      "tags": [
+        "KiCad",
+        "Analog",
+        "SMD",
+        "INA228"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "OPEN SOURCE",
+      "statusColor": "var(--green)",
+      "cat": [
+        "pcb",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "Range",
+          "v": "1µA – 1A auto"
+        },
+        {
+          "k": "Noise",
+          "v": "< 50nA RMS"
+        },
+        {
+          "k": "Interface",
+          "v": "BNC + I2C digital"
+        },
+        {
+          "k": "Power",
+          "v": "CR2032 coin cell"
+        }
+      ],
       "bullets": [
         "INA228 precision ADC",
         "Auto-ranging 1µA to 1A",
@@ -150,18 +305,43 @@
       "name": "EXOSKELETON KNEE",
       "col": "a",
       "desc": "Assistive knee exo with EMG intent detection and PID torque control.",
-      "tags": ["STM32G4", "EMG", "PID", "BLDC"],
-      "tc": ["", "a", "a", ""],
-      "status": "PUBLISHED",
-      "statusColor": "var(--cyan)",
-      "cat": ["robotics", "firmware"],
-      "specs": [
-        {"k": "Actuation", "v": "24V BLDC + planetary"},
-        {"k": "EMG channels", "v": "4 (MyoWare 2.0)"},
-        {"k": "Control", "v": "PID torque @ 2kHz"},
-        {"k": "Published", "v": "IEEE EMBC 2024"}
-      ],
       "detail": "Research project. EMG preprocessed on STM32G4. Gait phase from IMU data. Published IEEE EMBC 2024.",
+      "tags": [
+        "STM32G4",
+        "EMG",
+        "PID",
+        "BLDC"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "PUBLISHED",
+      "statusColor": "var(--green)",
+      "cat": [
+        "robotics",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "Actuation",
+          "v": "24V BLDC + planetary"
+        },
+        {
+          "k": "EMG channels",
+          "v": "4 (MyoWare 2.0)"
+        },
+        {
+          "k": "Control",
+          "v": "PID torque @ 2kHz"
+        },
+        {
+          "k": "Published",
+          "v": "IEEE EMBC 2024"
+        }
+      ],
       "bullets": [
         "Envelope detect + threshold classifier",
         "Cable-driven backdrivable actuation",
@@ -175,18 +355,43 @@
       "name": "LoRa MESH NET",
       "col": "c",
       "desc": "Self-healing LoRa mesh network for remote sensing over 15km.",
-      "tags": ["LoRa", "STM32L0", "RTOS", "RF"],
-      "tc": ["c", "", "c", "c"],
+      "detail": "Self-healing mesh: reroutes within 3 hops on node failure. Environmental monitoring in nature reserve.",
+      "tags": [
+        "LoRa",
+        "STM32L0",
+        "RTOS",
+        "RF"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
       "status": "DEPLOYED",
       "statusColor": "var(--green)",
-      "cat": ["iot", "firmware"],
-      "specs": [
-        {"k": "Module", "v": "SX1276 @ 868MHz"},
-        {"k": "Range", "v": "15km LOS tested"},
-        {"k": "Nodes", "v": "12 deployed"},
-        {"k": "Battery", "v": "~2 years (AA cells)"}
+      "cat": [
+        "iot",
+        "firmware"
       ],
-      "detail": "Self-healing mesh: reroutes within 3 hops on node failure. Environmental monitoring in nature reserve.",
+      "specs": [
+        {
+          "k": "Module",
+          "v": "SX1276 @ 868MHz"
+        },
+        {
+          "k": "Range",
+          "v": "15km LOS tested"
+        },
+        {
+          "k": "Nodes",
+          "v": "12 deployed"
+        },
+        {
+          "k": "Battery",
+          "v": "~2 years (AA cells)"
+        }
+      ],
       "bullets": [
         "Custom TDMA mesh routing",
         "STM32L0 < 2µA sleep",
@@ -200,8 +405,6 @@
       {
         "period": "2023 — PRESENT",
         "title": "EMBEDDED SYSTEMS ENGINEER",
-        "company": "Robotics Lab, Amman",
-        "color": "",
         "description": "Lead firmware developer for autonomous mobile robots.",
         "bullets": [
           "STM32-based motor controller PCBs (4-layer, KiCad)",
@@ -209,78 +412,79 @@
           "ROS2 integration with embedded CAN bus peripherals",
           "Reduced system latency 40% through DMA optimization"
         ],
-        "chips": [
-          {"label": "STM32", "color": ""},
-          {"label": "FreeRTOS", "color": ""},
-          {"label": "KiCad", "color": "a"},
-          {"label": "ROS2", "color": "c"}
-        ]
+        "color": "",
+        "company": "Robotics Lab, Amman"
       },
       {
         "period": "2022 — 2023",
         "title": "FIRMWARE INTERN",
-        "company": "IoT Startup, Amman",
-        "color": "a",
         "description": "Firmware for smart building sensor nodes.",
         "bullets": [
           "ESP32 firmware in C++ (Arduino + ESP-IDF)",
           "BLE & WiFi mesh — 50+ node deployment",
           "Designed PCB for environmental sensor breakout"
         ],
-        "chips": [
-          {"label": "ESP32", "color": ""},
-          {"label": "BLE", "color": "a"},
-          {"label": "MQTT", "color": ""}
-        ]
+        "color": "a",
+        "company": "IoT Startup, Amman"
       },
       {
         "period": "2021 — 2022",
         "title": "FREELANCE HW DESIGNER",
-        "company": "Self-employed",
-        "color": "c",
         "description": "Custom electronics and automation projects. PCB layout, enclosure design, and firmware delivery for local clients.",
         "bullets": [],
-        "chips": [
-          {"label": "KiCad", "color": "c"},
-          {"label": "Arduino", "color": ""},
-          {"label": "Fusion360", "color": "d"}
-        ]
+        "color": "c",
+        "company": "Self-employed"
       }
     ],
     "education": [
       {
         "period": "2020 — 2024",
         "title": "B.Sc. MECHATRONICS ENGINEERING",
-        "institution": "University of Jordan",
-        "color": "",
         "description": "Control systems, embedded electronics, robotics. Graduation: autonomous mobile robot with SLAM navigation.",
         "bullets": [
           "GPA: 3.7 / 4.0",
           "Best Graduation Project Award",
           "IEEE Student Branch member"
-        ]
+        ],
+        "color": "",
+        "institution": "University of Jordan"
       },
       {
         "period": "2023",
         "title": "IPC-A-610 CERTIFIED",
-        "institution": "PCB Assembly & Quality",
-        "color": "a",
         "description": "Certified in PCB assembly and quality inspection standards.",
-        "bullets": []
+        "bullets": [],
+        "color": "a",
+        "institution": "PCB Assembly & Quality"
       },
       {
         "period": "2022",
         "title": "ROS2 DEVELOPER COURSE",
-        "institution": "The Construct / Online",
-        "color": "c",
         "description": "Advanced robotics middleware, navigation stack, custom nodes.",
-        "bullets": []
+        "bullets": [],
+        "color": "c",
+        "institution": "The Construct / Online"
       }
     ],
     "achievements": [
-      {"icon": "🏆", "title": "IEEE Robotics Competition — 1st Place", "subtitle": "Regional autonomous vehicle challenge, 2023", "color": ""},
-      {"icon": "📄", "title": "Published — IEEE EMBC 2024", "subtitle": "EMG-based exoskeleton knee joint control", "color": "a"},
-      {"icon": "⚡", "title": "Hackathon Winner — Hardware Track", "subtitle": "Built 4-hour power blackout detector + notifier", "color": "c"}
+      {
+        "icon": "🏆",
+        "title": "IEEE Robotics Competition — 1st Place",
+        "subtitle": "Regional autonomous vehicle challenge, 2023",
+        "color": ""
+      },
+      {
+        "icon": "📄",
+        "title": "Published — IEEE EMBC 2024",
+        "subtitle": "EMG-based exoskeleton knee joint control",
+        "color": "a"
+      },
+      {
+        "icon": "⚡",
+        "title": "Hackathon Winner — Hardware Track",
+        "subtitle": "Built 4-hour power blackout detector + notifier",
+        "color": "c"
+      }
     ]
   },
   "skills": {
@@ -289,46 +493,133 @@
         "title": "FIRMWARE & SOFTWARE",
         "color": "",
         "items": [
-          {"name": "Embedded C / C++", "pct": 92, "color": "g"},
-          {"name": "FreeRTOS / Zephyr", "pct": 82, "color": "a"},
-          {"name": "Python (scripting)", "pct": 75, "color": "c"},
-          {"name": "ROS2 Middleware", "pct": 72, "color": "c"},
-          {"name": "MATLAB / Simulink", "pct": 68, "color": "a"}
+          {
+            "name": "Embedded C / C++",
+            "pct": 92,
+            "color": "g"
+          },
+          {
+            "name": "FreeRTOS / Zephyr",
+            "pct": 82,
+            "color": "a"
+          },
+          {
+            "name": "Python (scripting)",
+            "pct": 75,
+            "color": "c"
+          },
+          {
+            "name": "ROS2 Middleware",
+            "pct": 72,
+            "color": "c"
+          },
+          {
+            "name": "MATLAB / Simulink",
+            "pct": 68,
+            "color": "a"
+          }
         ]
       },
       {
         "title": "HARDWARE & ELECTRONICS",
         "color": "a",
         "items": [
-          {"name": "Comm. Protocols (I2C/SPI/CAN/UART)", "pct": 95, "color": "g"},
-          {"name": "PCB Design (KiCad / Altium)", "pct": 86, "color": "a"},
-          {"name": "Power Electronics / Motor Drivers", "pct": 80, "color": "a"},
-          {"name": "Analog Circuit Design", "pct": 74, "color": "g"},
-          {"name": "RF / Wireless (LoRa, BLE, WiFi)", "pct": 70, "color": "c"}
+          {
+            "name": "Comm. Protocols (I2C/SPI/CAN/UART)",
+            "pct": 95,
+            "color": "g"
+          },
+          {
+            "name": "PCB Design (KiCad / Altium)",
+            "pct": 86,
+            "color": "a"
+          },
+          {
+            "name": "Power Electronics / Motor Drivers",
+            "pct": 80,
+            "color": "a"
+          },
+          {
+            "name": "Analog Circuit Design",
+            "pct": 74,
+            "color": "g"
+          },
+          {
+            "name": "RF / Wireless (LoRa, BLE, WiFi)",
+            "pct": 70,
+            "color": "c"
+          }
         ]
       },
       {
         "title": "MECHANICAL & SYSTEMS",
         "color": "c",
         "items": [
-          {"name": "Control Systems & PID Tuning", "pct": 88, "color": "g"},
-          {"name": "3D CAD (SolidWorks / Fusion360)", "pct": 78, "color": "c"},
-          {"name": "Kinematics & Robot Dynamics", "pct": 76, "color": "a"},
-          {"name": "Sensor Fusion (IMU/GPS/LiDAR)", "pct": 72, "color": "g"},
-          {"name": "SLAM / Navigation", "pct": 65, "color": "c"}
+          {
+            "name": "Control Systems & PID Tuning",
+            "pct": 88,
+            "color": "g"
+          },
+          {
+            "name": "3D CAD (SolidWorks / Fusion360)",
+            "pct": 78,
+            "color": "c"
+          },
+          {
+            "name": "Kinematics & Robot Dynamics",
+            "pct": 76,
+            "color": "a"
+          },
+          {
+            "name": "Sensor Fusion (IMU/GPS/LiDAR)",
+            "pct": 72,
+            "color": "g"
+          },
+          {
+            "name": "SLAM / Navigation",
+            "pct": 65,
+            "color": "c"
+          }
         ]
       }
     ],
     "tools": [
-      {"icon": "🔧", "name": "KiCad"},
-      {"icon": "⚡", "name": "STM32CubeIDE"},
-      {"icon": "📡", "name": "ESP-IDF"},
-      {"icon": "📦", "name": "Git"},
-      {"icon": "🐧", "name": "Linux"},
-      {"icon": "📐", "name": "SolidWorks"},
-      {"icon": "🔬", "name": "Logic Analyzer"},
-      {"icon": "📊", "name": "Oscilloscope"},
-      {"icon": "🤖", "name": "ROS2"}
+      {
+        "icon": "🔧",
+        "name": "KiCad"
+      },
+      {
+        "icon": "⚡",
+        "name": "STM32CubeIDE"
+      },
+      {
+        "icon": "📡",
+        "name": "ESP-IDF"
+      },
+      {
+        "icon": "📦",
+        "name": "Git"
+      },
+      {
+        "icon": "🐧",
+        "name": "Linux"
+      },
+      {
+        "icon": "📐",
+        "name": "SolidWorks"
+      },
+      {
+        "icon": "🔬",
+        "name": "Logic Analyzer"
+      },
+      {
+        "icon": "📊",
+        "name": "Oscilloscope"
+      },
+      {
+        "icon": "🤖",
+        "name": "ROS2"
+      }
     ]
   },
   "buildlog": [
@@ -338,9 +629,18 @@
       "title": "Debugging a weird I2C clock stretching issue on STM32H7",
       "excerpt": "Spent 6 hours on what turned out to be a pull-up resistor value. The STM32H7's I2C peripheral is extra sensitive at 400kHz...",
       "chips": [
-        {"label": "STM32", "color": ""},
-        {"label": "I2C", "color": ""},
-        {"label": "Debug", "color": "d"}
+        {
+          "label": "STM32",
+          "color": ""
+        },
+        {
+          "label": "I2C",
+          "color": ""
+        },
+        {
+          "label": "Debug",
+          "color": "d"
+        }
       ]
     },
     {
@@ -349,9 +649,18 @@
       "title": "Why I switched from Arduino to Zephyr RTOS and never looked back",
       "excerpt": "Arduino is great for prototyping. But once you need real-time guarantees and deterministic scheduling, you need an RTOS...",
       "chips": [
-        {"label": "Zephyr", "color": ""},
-        {"label": "RTOS", "color": ""},
-        {"label": "Opinion", "color": "a"}
+        {
+          "label": "Zephyr",
+          "color": ""
+        },
+        {
+          "label": "RTOS",
+          "color": ""
+        },
+        {
+          "label": "Opinion",
+          "color": "a"
+        }
       ]
     },
     {
@@ -360,9 +669,18 @@
       "title": "Building a custom BLDC driver from scratch — schematic to spin",
       "excerpt": "Three-phase gate driver, bootstrap caps, current sensing, and field-oriented control. Full walkthrough of my BLDC board...",
       "chips": [
-        {"label": "BLDC", "color": "c"},
-        {"label": "FOC", "color": "c"},
-        {"label": "KiCad", "color": "a"}
+        {
+          "label": "BLDC",
+          "color": "c"
+        },
+        {
+          "label": "FOC",
+          "color": "c"
+        },
+        {
+          "label": "KiCad",
+          "color": "a"
+        }
       ]
     },
     {
@@ -371,9 +689,18 @@
       "title": "PCB layout tips for high-frequency switching circuits",
       "excerpt": "Hot components, EMI failures, and ground plane nightmares. Everything I wish someone told me before my first SMPS board...",
       "chips": [
-        {"label": "PCB", "color": "a"},
-        {"label": "EMI", "color": "a"},
-        {"label": "Power", "color": ""}
+        {
+          "label": "PCB",
+          "color": "a"
+        },
+        {
+          "label": "EMI",
+          "color": "a"
+        },
+        {
+          "label": "Power",
+          "color": ""
+        }
       ]
     }
   ],
@@ -392,30 +719,887 @@
       "All PCB projects open-source on GitHub",
       "Daily carry: logic analyzer + multimeter"
     ],
-    "currentStatus": "Looking for embedded systems or mechatronics roles. Open to remote, relocation, or freelance.",
     "openToWork": true,
+    "currentStatus": "Looking for embedded systems or mechatronics roles. Open to remote, relocation, or freelance.",
     "languages": [
-      {"flag": "🇯🇴", "lang": "Arabic", "level": "Native"},
-      {"flag": "🇬🇧", "lang": "English", "level": "Fluent (C1)"},
-      {"flag": "💻", "lang": "C/C++", "level": "Fluent"},
-      {"flag": "🐍", "lang": "Python", "level": "Conversational"}
+      {
+        "flag": "🇯🇴",
+        "lang": "Arabic",
+        "level": "Native"
+      },
+      {
+        "flag": "🇬🇧",
+        "lang": "English",
+        "level": "Fluent (C1)"
+      },
+      {
+        "flag": "💻",
+        "lang": "C/C++",
+        "level": "Fluent"
+      },
+      {
+        "flag": "🐍",
+        "lang": "Python",
+        "level": "Conversational"
+      }
     ],
     "interests": [
-      {"label": "Robotics", "color": "a"},
-      {"label": "Power Electronics", "color": "a"},
-      {"label": "FPGA", "color": ""},
-      {"label": "RF / SDR", "color": ""},
-      {"label": "Open Hardware", "color": "c"},
-      {"label": "Control Theory", "color": "c"},
-      {"label": "3D Printing", "color": "d"}
+      {
+        "label": "Robotics",
+        "color": "a"
+      },
+      {
+        "label": "Power Electronics",
+        "color": "a"
+      },
+      {
+        "label": "FPGA",
+        "color": ""
+      },
+      {
+        "label": "RF / SDR",
+        "color": ""
+      },
+      {
+        "label": "Open Hardware",
+        "color": "c"
+      },
+      {
+        "label": "Control Theory",
+        "color": "c"
+      },
+      {
+        "label": "3D Printing",
+        "color": "d"
+      }
     ],
     "labSetup": [
-      {"icon": "🖥️", "item": "Linux (Arch) + Windows dual boot"},
-      {"icon": "⚡", "item": "STM32CubeIDE + VSCode"},
-      {"icon": "📐", "item": "KiCad 8"},
-      {"icon": "🔬", "item": "Rigol DS1054Z oscilloscope"},
-      {"icon": "📡", "item": "Saleae Logic Pro 8"},
-      {"icon": "☕", "item": "Moka pot, always"}
+      {
+        "icon": "🖥️",
+        "item": "Linux (Arch) + Windows dual boot"
+      },
+      {
+        "icon": "⚡",
+        "item": "STM32CubeIDE + VSCode"
+      },
+      {
+        "icon": "📐",
+        "item": "KiCad 8"
+      },
+      {
+        "icon": "🔬",
+        "item": "Rigol DS1054Z oscilloscope"
+      },
+      {
+        "icon": "📡",
+        "item": "Saleae Logic Pro 8"
+      },
+      {
+        "icon": "☕",
+        "item": "Moka pot, always"
+      }
+    ]
+  }
+}{
+  "meta": {
+    "siteTitle": "MECHA.DEV",
+    "osVersion": "v1.0.0",
+    "tagline": "Embedded Systems & Mechatronics Engineering",
+    "bootLines": [
+      "Loading kernel modules...",
+      "Initializing GPIO...",
+      "Mounting filesystem...",
+      "Starting I2C @ 400kHz...",
+      "Starting SPI @ 8MHz...",
+      "Loading project manifest...",
+      "Calibrating skill matrix...",
+      "All systems nominal. BOOT COMPLETE ✓"
+    ]
+  },
+  "hero": {
+    "name": "AHMAD.SALEH",
+    "role": "EMBEDDED SYSTEMS & MECHATRONICS ENGINEER",
+    "location": "Amman, JO",
+    "bio": "I make hardware talk to software. Designing circuits, writing firmware, and building robots that (usually) do what I want.",
+    "chips": [
+      {
+        "label": "C/C++",
+        "color": ""
+      },
+      {
+        "label": "STM32",
+        "color": ""
+      },
+      {
+        "label": "ESP32",
+        "color": ""
+      },
+      {
+        "label": "KiCad",
+        "color": "a"
+      },
+      {
+        "label": "PCB Design",
+        "color": "a"
+      },
+      {
+        "label": "ROS2",
+        "color": "c"
+      },
+      {
+        "label": "FreeRTOS",
+        "color": "c"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": "6",
+      "label": "PROJECTS",
+      "color": ""
+    },
+    {
+      "value": "3+",
+      "label": "YEARS EXP",
+      "color": "a"
+    },
+    {
+      "value": "18",
+      "label": "PCBs DESIGNED",
+      "color": "c"
+    }
+  ],
+  "contact": {
+    "availableStatus": "Currently available for freelance projects, full-time roles, and interesting collaborations.",
+    "channels": [
+      {
+        "icon": "📧",
+        "label": "EMAIL",
+        "value": "you@example.com",
+        "color": ""
+      },
+      {
+        "icon": "🐙",
+        "label": "GITHUB",
+        "value": "github.com/yourhandle",
+        "color": "a"
+      },
+      {
+        "icon": "💼",
+        "label": "LINKEDIN",
+        "value": "linkedin.com/in/yourname",
+        "color": "c"
+      },
+      {
+        "icon": "🐦",
+        "label": "TWITTER / X",
+        "value": "@yourhandle",
+        "color": ""
+      }
+    ]
+  },
+  "projects": [
+    {
+      "id": "p1",
+      "icon": "🤖",
+      "name": "HEXAPOD MK-II",
+      "col": "",
+      "desc": "18-DOF walking robot with real-time inverse kinematics and terrain adaptation.",
+      "detail": "Built from scratch. Chassis in SolidWorks, PCB in KiCad (4-layer). FreeRTOS with dedicated kinematics task at 500Hz.",
+      "tags": [
+        "STM32",
+        "C++",
+        "IK",
+        "FreeRTOS"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "DEPLOYED",
+      "statusColor": "var(--green)",
+      "cat": [
+        "robotics",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "MCU",
+          "v": "STM32F446 @ 180MHz"
+        },
+        {
+          "k": "DOF",
+          "v": "18 (6 legs × 3)"
+        },
+        {
+          "k": "Comm",
+          "v": "CAN bus @ 1Mbps"
+        },
+        {
+          "k": "Battery",
+          "v": "4S LiPo 60min"
+        }
+      ],
+      "bullets": [
+        "Custom IK solver — no FP library",
+        "Terrain adapt via IMU + foot sensors",
+        "CAN bus for distributed servo control",
+        "WiFi co-processor telemetry dashboard"
+      ]
+    },
+    {
+      "id": "p2",
+      "icon": "⚡",
+      "name": "MPPT SOLAR CTRL",
+      "col": "a",
+      "desc": "Custom solar charge controller with 94% efficiency and CAN bus telemetry.",
+      "detail": "Custom inductor winding. Si8233 gate driver. 4-layer PCB with thermal relief on FETs. Handles 800W peak.",
+      "tags": [
+        "ESP32",
+        "Power",
+        "CAN",
+        "KiCad"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "DEPLOYED",
+      "statusColor": "var(--green)",
+      "cat": [
+        "firmware",
+        "power",
+        "pcb"
+      ],
+      "specs": [
+        {
+          "k": "MCU",
+          "v": "ESP32-S3"
+        },
+        {
+          "k": "Topology",
+          "v": "Sync Buck @ 200kHz"
+        },
+        {
+          "k": "Efficiency",
+          "v": "94.2% peak"
+        },
+        {
+          "k": "Max Input",
+          "v": "40V / 20A"
+        }
+      ],
+      "bullets": [
+        "Perturb & Observe MPPT",
+        "CAN bus telemetry",
+        "OLED + SD datalogging",
+        "Coulomb counting state estimation"
+      ]
+    },
+    {
+      "id": "p3",
+      "icon": "🌊",
+      "name": "UNDERWATER ROV",
+      "col": "c",
+      "desc": "Tethered ROV with 4 thrusters, depth sensor, and 1080p live video to 30m.",
+      "detail": "50m armored Cat6 tether. Custom ROS2 nodes for thruster mixing, heading hold PID, and depth control.",
+      "tags": [
+        "ROS2",
+        "RPi4",
+        "IMU",
+        "OpenCV"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "TESTING",
+      "statusColor": "var(--green)",
+      "cat": [
+        "robotics",
+        "firmware",
+        "iot"
+      ],
+      "specs": [
+        {
+          "k": "Brain",
+          "v": "RPi4 + Arduino Nano"
+        },
+        {
+          "k": "Thrusters",
+          "v": "4× T200"
+        },
+        {
+          "k": "Depth",
+          "v": "30m rated (20m tested)"
+        },
+        {
+          "k": "Video",
+          "v": "1080p H.264 <200ms"
+        }
+      ],
+      "bullets": [
+        "Thruster mixing matrix 4-DOF",
+        "Depth hold PID ±5cm",
+        "GStreamer live video pipeline",
+        "Bar30 depth + BNO085 IMU fusion"
+      ]
+    },
+    {
+      "id": "p4",
+      "icon": "🔬",
+      "name": "µCURRENT PROBE",
+      "col": "",
+      "desc": "Ultra-low noise current measurement PCB for power profiling IoT devices.",
+      "detail": "Designed for profiling ESP32 / nRF52 during sleep/wake cycles. 4-layer PCB shielded trace routing. Open-source.",
+      "tags": [
+        "KiCad",
+        "Analog",
+        "SMD",
+        "INA228"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "OPEN SOURCE",
+      "statusColor": "var(--green)",
+      "cat": [
+        "pcb",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "Range",
+          "v": "1µA – 1A auto"
+        },
+        {
+          "k": "Noise",
+          "v": "< 50nA RMS"
+        },
+        {
+          "k": "Interface",
+          "v": "BNC + I2C digital"
+        },
+        {
+          "k": "Power",
+          "v": "CR2032 coin cell"
+        }
+      ],
+      "bullets": [
+        "INA228 precision ADC",
+        "Auto-ranging 1µA to 1A",
+        "USB-C for PC logging",
+        "KiCad project MIT license"
+      ]
+    },
+    {
+      "id": "p5",
+      "icon": "🦾",
+      "name": "EXOSKELETON KNEE",
+      "col": "a",
+      "desc": "Assistive knee exo with EMG intent detection and PID torque control.",
+      "detail": "Research project. EMG preprocessed on STM32G4. Gait phase from IMU data. Published IEEE EMBC 2024.",
+      "tags": [
+        "STM32G4",
+        "EMG",
+        "PID",
+        "BLDC"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "PUBLISHED",
+      "statusColor": "var(--green)",
+      "cat": [
+        "robotics",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "Actuation",
+          "v": "24V BLDC + planetary"
+        },
+        {
+          "k": "EMG channels",
+          "v": "4 (MyoWare 2.0)"
+        },
+        {
+          "k": "Control",
+          "v": "PID torque @ 2kHz"
+        },
+        {
+          "k": "Published",
+          "v": "IEEE EMBC 2024"
+        }
+      ],
+      "bullets": [
+        "Envelope detect + threshold classifier",
+        "Cable-driven backdrivable actuation",
+        "Emergency stop hardware interlock",
+        "IEEE EMBC 2024 publication"
+      ]
+    },
+    {
+      "id": "p6",
+      "icon": "📡",
+      "name": "LoRa MESH NET",
+      "col": "c",
+      "desc": "Self-healing LoRa mesh network for remote sensing over 15km.",
+      "detail": "Self-healing mesh: reroutes within 3 hops on node failure. Environmental monitoring in nature reserve.",
+      "tags": [
+        "LoRa",
+        "STM32L0",
+        "RTOS",
+        "RF"
+      ],
+      "tc": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "status": "DEPLOYED",
+      "statusColor": "var(--green)",
+      "cat": [
+        "iot",
+        "firmware"
+      ],
+      "specs": [
+        {
+          "k": "Module",
+          "v": "SX1276 @ 868MHz"
+        },
+        {
+          "k": "Range",
+          "v": "15km LOS tested"
+        },
+        {
+          "k": "Nodes",
+          "v": "12 deployed"
+        },
+        {
+          "k": "Battery",
+          "v": "~2 years (AA cells)"
+        }
+      ],
+      "bullets": [
+        "Custom TDMA mesh routing",
+        "STM32L0 < 2µA sleep",
+        "Auto-rerouting on failure",
+        "Temp/humidity/soil/light payload"
+      ]
+    }
+  ],
+  "experience": {
+    "work": [
+      {
+        "period": "2023 — PRESENT",
+        "title": "EMBEDDED SYSTEMS ENGINEER",
+        "description": "Lead firmware developer for autonomous mobile robots.",
+        "bullets": [
+          "STM32-based motor controller PCBs (4-layer, KiCad)",
+          "FreeRTOS task architecture for real-time control",
+          "ROS2 integration with embedded CAN bus peripherals",
+          "Reduced system latency 40% through DMA optimization"
+        ],
+        "color": "",
+        "company": "Robotics Lab, Amman"
+      },
+      {
+        "period": "2022 — 2023",
+        "title": "FIRMWARE INTERN",
+        "description": "Firmware for smart building sensor nodes.",
+        "bullets": [
+          "ESP32 firmware in C++ (Arduino + ESP-IDF)",
+          "BLE & WiFi mesh — 50+ node deployment",
+          "Designed PCB for environmental sensor breakout"
+        ],
+        "color": "a",
+        "company": "IoT Startup, Amman"
+      },
+      {
+        "period": "2021 — 2022",
+        "title": "FREELANCE HW DESIGNER",
+        "description": "Custom electronics and automation projects. PCB layout, enclosure design, and firmware delivery for local clients.",
+        "bullets": [],
+        "color": "c",
+        "company": "Self-employed"
+      }
+    ],
+    "education": [
+      {
+        "period": "2020 — 2024",
+        "title": "B.Sc. MECHATRONICS ENGINEERING",
+        "description": "Control systems, embedded electronics, robotics. Graduation: autonomous mobile robot with SLAM navigation.",
+        "bullets": [
+          "GPA: 3.7 / 4.0",
+          "Best Graduation Project Award",
+          "IEEE Student Branch member"
+        ],
+        "color": "",
+        "institution": "University of Jordan"
+      },
+      {
+        "period": "2023",
+        "title": "IPC-A-610 CERTIFIED",
+        "description": "Certified in PCB assembly and quality inspection standards.",
+        "bullets": [],
+        "color": "a",
+        "institution": "PCB Assembly & Quality"
+      },
+      {
+        "period": "2022",
+        "title": "ROS2 DEVELOPER COURSE",
+        "description": "Advanced robotics middleware, navigation stack, custom nodes.",
+        "bullets": [],
+        "color": "c",
+        "institution": "The Construct / Online"
+      }
+    ],
+    "achievements": [
+      {
+        "icon": "🏆",
+        "title": "IEEE Robotics Competition — 1st Place",
+        "subtitle": "Regional autonomous vehicle challenge, 2023",
+        "color": ""
+      },
+      {
+        "icon": "📄",
+        "title": "Published — IEEE EMBC 2024",
+        "subtitle": "EMG-based exoskeleton knee joint control",
+        "color": "a"
+      },
+      {
+        "icon": "⚡",
+        "title": "Hackathon Winner — Hardware Track",
+        "subtitle": "Built 4-hour power blackout detector + notifier",
+        "color": "c"
+      }
+    ]
+  },
+  "skills": {
+    "categories": [
+      {
+        "title": "FIRMWARE & SOFTWARE",
+        "color": "",
+        "items": [
+          {
+            "name": "Embedded C / C++",
+            "pct": 92,
+            "color": "g"
+          },
+          {
+            "name": "FreeRTOS / Zephyr",
+            "pct": 82,
+            "color": "a"
+          },
+          {
+            "name": "Python (scripting)",
+            "pct": 75,
+            "color": "c"
+          },
+          {
+            "name": "ROS2 Middleware",
+            "pct": 72,
+            "color": "c"
+          },
+          {
+            "name": "MATLAB / Simulink",
+            "pct": 68,
+            "color": "a"
+          }
+        ]
+      },
+      {
+        "title": "HARDWARE & ELECTRONICS",
+        "color": "a",
+        "items": [
+          {
+            "name": "Comm. Protocols (I2C/SPI/CAN/UART)",
+            "pct": 95,
+            "color": "g"
+          },
+          {
+            "name": "PCB Design (KiCad / Altium)",
+            "pct": 86,
+            "color": "a"
+          },
+          {
+            "name": "Power Electronics / Motor Drivers",
+            "pct": 80,
+            "color": "a"
+          },
+          {
+            "name": "Analog Circuit Design",
+            "pct": 74,
+            "color": "g"
+          },
+          {
+            "name": "RF / Wireless (LoRa, BLE, WiFi)",
+            "pct": 70,
+            "color": "c"
+          }
+        ]
+      },
+      {
+        "title": "MECHANICAL & SYSTEMS",
+        "color": "c",
+        "items": [
+          {
+            "name": "Control Systems & PID Tuning",
+            "pct": 88,
+            "color": "g"
+          },
+          {
+            "name": "3D CAD (SolidWorks / Fusion360)",
+            "pct": 78,
+            "color": "c"
+          },
+          {
+            "name": "Kinematics & Robot Dynamics",
+            "pct": 76,
+            "color": "a"
+          },
+          {
+            "name": "Sensor Fusion (IMU/GPS/LiDAR)",
+            "pct": 72,
+            "color": "g"
+          },
+          {
+            "name": "SLAM / Navigation",
+            "pct": 65,
+            "color": "c"
+          }
+        ]
+      }
+    ],
+    "tools": [
+      {
+        "icon": "🔧",
+        "name": "KiCad"
+      },
+      {
+        "icon": "⚡",
+        "name": "STM32CubeIDE"
+      },
+      {
+        "icon": "📡",
+        "name": "ESP-IDF"
+      },
+      {
+        "icon": "📦",
+        "name": "Git"
+      },
+      {
+        "icon": "🐧",
+        "name": "Linux"
+      },
+      {
+        "icon": "📐",
+        "name": "SolidWorks"
+      },
+      {
+        "icon": "🔬",
+        "name": "Logic Analyzer"
+      },
+      {
+        "icon": "📊",
+        "name": "Oscilloscope"
+      },
+      {
+        "icon": "🤖",
+        "name": "ROS2"
+      }
+    ]
+  },
+  "buildlog": [
+    {
+      "day": "12",
+      "monthYear": "NOV 2024",
+      "title": "Debugging a weird I2C clock stretching issue on STM32H7",
+      "excerpt": "Spent 6 hours on what turned out to be a pull-up resistor value. The STM32H7's I2C peripheral is extra sensitive at 400kHz...",
+      "chips": [
+        {
+          "label": "STM32",
+          "color": ""
+        },
+        {
+          "label": "I2C",
+          "color": ""
+        },
+        {
+          "label": "Debug",
+          "color": "d"
+        }
+      ]
+    },
+    {
+      "day": "03",
+      "monthYear": "OCT 2024",
+      "title": "Why I switched from Arduino to Zephyr RTOS and never looked back",
+      "excerpt": "Arduino is great for prototyping. But once you need real-time guarantees and deterministic scheduling, you need an RTOS...",
+      "chips": [
+        {
+          "label": "Zephyr",
+          "color": ""
+        },
+        {
+          "label": "RTOS",
+          "color": ""
+        },
+        {
+          "label": "Opinion",
+          "color": "a"
+        }
+      ]
+    },
+    {
+      "day": "18",
+      "monthYear": "SEP 2024",
+      "title": "Building a custom BLDC driver from scratch — schematic to spin",
+      "excerpt": "Three-phase gate driver, bootstrap caps, current sensing, and field-oriented control. Full walkthrough of my BLDC board...",
+      "chips": [
+        {
+          "label": "BLDC",
+          "color": "c"
+        },
+        {
+          "label": "FOC",
+          "color": "c"
+        },
+        {
+          "label": "KiCad",
+          "color": "a"
+        }
+      ]
+    },
+    {
+      "day": "07",
+      "monthYear": "AUG 2024",
+      "title": "PCB layout tips for high-frequency switching circuits",
+      "excerpt": "Hot components, EMI failures, and ground plane nightmares. Everything I wish someone told me before my first SMPS board...",
+      "chips": [
+        {
+          "label": "PCB",
+          "color": "a"
+        },
+        {
+          "label": "EMI",
+          "color": "a"
+        },
+        {
+          "label": "Power",
+          "color": ""
+        }
+      ]
+    }
+  ],
+  "about": {
+    "bio": [
+      "I'm a <em>mechatronics engineer</em> based in <b>Amman, Jordan</b> who loves the intersection of hardware and software. My work lives at the boundary where circuits meet code — writing firmware for microcontrollers, designing PCBs, and building robots.",
+      "I got into embedded systems because I was fascinated by how a few lines of C could make a motor spin at exactly the right speed, or make a sensor network report back live data from across a field. That magic still drives me.",
+      "When I'm not at my desk, you'll find me <em>soldering something</em>, reading datasheets (yes, for fun), or arguing about the correct way to do I2C pull-up calculations."
+    ],
+    "quickFacts": [
+      "Based in Amman, Jordan 🇯🇴",
+      "B.Sc. Mechatronics Engineering, University of Jordan (2024)",
+      "Primary language: C/C++ on embedded targets",
+      "Favorite MCU: STM32 H7 series",
+      "Currently obsessed with: Zephyr RTOS & custom BLDC drives",
+      "All PCB projects open-source on GitHub",
+      "Daily carry: logic analyzer + multimeter"
+    ],
+    "openToWork": true,
+    "currentStatus": "Looking for embedded systems or mechatronics roles. Open to remote, relocation, or freelance.",
+    "languages": [
+      {
+        "flag": "🇯🇴",
+        "lang": "Arabic",
+        "level": "Native"
+      },
+      {
+        "flag": "🇬🇧",
+        "lang": "English",
+        "level": "Fluent (C1)"
+      },
+      {
+        "flag": "💻",
+        "lang": "C/C++",
+        "level": "Fluent"
+      },
+      {
+        "flag": "🐍",
+        "lang": "Python",
+        "level": "Conversational"
+      }
+    ],
+    "interests": [
+      {
+        "label": "Robotics",
+        "color": "a"
+      },
+      {
+        "label": "Power Electronics",
+        "color": "a"
+      },
+      {
+        "label": "FPGA",
+        "color": ""
+      },
+      {
+        "label": "RF / SDR",
+        "color": ""
+      },
+      {
+        "label": "Open Hardware",
+        "color": "c"
+      },
+      {
+        "label": "Control Theory",
+        "color": "c"
+      },
+      {
+        "label": "3D Printing",
+        "color": "d"
+      }
+    ],
+    "labSetup": [
+      {
+        "icon": "🖥️",
+        "item": "Linux (Arch) + Windows dual boot"
+      },
+      {
+        "icon": "⚡",
+        "item": "STM32CubeIDE + VSCode"
+      },
+      {
+        "icon": "📐",
+        "item": "KiCad 8"
+      },
+      {
+        "icon": "🔬",
+        "item": "Rigol DS1054Z oscilloscope"
+      },
+      {
+        "icon": "📡",
+        "item": "Saleae Logic Pro 8"
+      },
+      {
+        "icon": "☕",
+        "item": "Moka pot, always"
+      }
     ]
   }
 }
